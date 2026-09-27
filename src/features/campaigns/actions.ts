@@ -23,6 +23,6 @@ export async function previewCampaign(_:ActionState,form:FormData):Promise<Actio
 export async function confirmCampaign(_:ActionState,form:FormData):Promise<ActionState>{
  const {profile}=await requireAdmin();const parsed=z.uuid().safeParse(form.get('id'));if(!parsed.success)return {error:t.invalid};
  const {error}=await createAdminClient().rpc('confirm_campaign',{p_actor:profile.id,p_id:parsed.data});
- if(error)return {error:t.failedSave};
+ if(error)return {error:error.message.includes('Mtaa campaign limit reached')?t.campaignLimitReached:t.failedSave};
  revalidatePath('/admin/campaigns/'+parsed.data);return {success:t.saved};
 }

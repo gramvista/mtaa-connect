@@ -332,6 +332,26 @@ describe('PostgreSQL migrations and security', () => {
     // Keep the queue assertion below focused on the welcome message.
     await db.query("update public.sms_campaigns set status='cancelled' where id=$1",[cid]);
   });
+  it('enforces the six-month Mtaa campaign allowance and lets only Super Admin change it',async()=>{
+    await db.exec('begin');
+    try{
+      const initial=await scalar("select public.mtaa_campaign_quota($1,$2)->>'limit'",[leader,mtaa]);
+      expect(initial).toBe('11');
+      const used=Number(await scalar("select public.mtaa_campaign_quota($1,$2)->>'used'",[leader,mtaa]));
+      await db.query('select public.set_mtaa_campaign_limit($1,$2,$3)',[admin,mtaa,used+1]);
+      const first=await scalar("select public.preview_campaign($1,$2,'Last allowed','Habari','all',null,null,'{}',1)",[leader,mtaa]);
+      await db.query('select public.confirm_campaign($1,$2)',[leader,first]);
+      expect(await scalar("select public.mtaa_campaign_quota($1,$2)->>'remaining'",[leader,mtaa])).toBe('0');
+      const blocked=await scalar("select public.preview_campaign($1,$2,'Over limit','Habari','all',null,null,'{}',1)",[leader,mtaa]);
+      await db.exec('savepoint quota_exceeded');
+      await expect(db.query('select public.confirm_campaign($1,$2)',[leader,blocked])).rejects.toThrow('Mtaa campaign limit reached');
+      await db.exec('rollback to savepoint quota_exceeded');
+      await db.exec('savepoint quota_forbidden');
+      await expect(db.query('select public.set_mtaa_campaign_limit($1,$2,99)',[leader,mtaa])).rejects.toThrow('Forbidden');
+      await db.exec('rollback to savepoint quota_forbidden');
+      expect(await scalar("select has_function_privilege('authenticated','public.set_mtaa_campaign_limit(uuid,uuid,integer)','execute')::text")).toBe('false');
+    }finally{await db.exec('rollback');}
+  });
   it('extends renewals from current expiry and does not queue a second welcome', async () => {
     const previous=await scalar('select max(expires_at)::text from public.subscriptions where resident_id=$1',[resident]);
     const payment=await scalar("select public.create_payment($1,$2,'mock',gen_random_uuid())",[leader,resident]);

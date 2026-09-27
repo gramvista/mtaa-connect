@@ -49,3 +49,11 @@ export async function saveWelcomeTemplate(_:ActionState,form:FormData):Promise<A
  const {error}=await createAdminClient().rpc('save_welcome_template',{p_actor:profile.id,p_message:parsed.data});
  return error?{error:t.failedSave}:{success:t.saved};
 }
+export async function setMtaaCampaignLimit(_:ActionState,form:FormData):Promise<ActionState> {
+ const {profile}=await requireAdmin(true);
+ const parsed=z.object({mtaa_id:z.uuid(),limit:z.coerce.number().int().min(1).max(10000)}).safeParse(Object.fromEntries(form));
+ if(!parsed.success)return {error:t.invalid};
+ const {error}=await createAdminClient().rpc('set_mtaa_campaign_limit',{p_actor:profile.id,p_mtaa:parsed.data.mtaa_id,p_limit:parsed.data.limit});
+ if(error)return {error:t.failedSave};
+ revalidatePath('/admin/quotas');revalidatePath('/admin');return {success:t.saved};
+}

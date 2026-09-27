@@ -7,6 +7,7 @@ export const adminText = {
  dashboard: 'Muhtasari', residents: 'Wakazi', newResident: 'Sajili mkazi', editResident: 'Hariri mkazi',
  locations: 'Maeneo', groupings: 'Vikundi', categories: 'Makundi', administrators: 'Wasimamizi', subscriptions: 'Usajili na malipo',
  campaigns: 'Kampeni za SMS', newCampaign: 'Andaa SMS', audit: 'Kumbukumbu', settings: 'Mipangilio',
+ campaignQuotas:'Vikomo vya SMS',campaignQuotaHelp:'Kila Mtaa una kampeni 11 kwa miezi sita. Badilisha kikomo hapa kwa mpango wa biashara bila kufuta matumizi yaliyopo.',campaignUsage:'Kampeni zilizotumika',campaignRemaining:'Zilizobaki',campaignLimit:'Kikomo cha kampeni',campaignAllowance:'Kampeni zilizobaki katika kipindi hiki',periodEnds:'Kipindi kinaisha',increaseLimit:'Hifadhi kikomo',campaignLimitReached:'Kikomo cha kampeni za miezi sita kimefikiwa. Wasiliana na Msimamizi Mkuu ili kuongeza kikomo.',
  name: 'Jina kamili', phone: 'Namba ya simu', region: 'Mkoa', district: 'Wilaya', ward: 'Kata / Shehia', mtaa: 'Mtaa', balozi: 'Eneo la Balozi',
  select: 'Chagua', optional: 'si lazima', all: 'Zote', save: 'Hifadhi', saving: 'Inahifadhi…', cancel: 'Rudi', search: 'Tafuta', searchHint: 'Jina au simu',
  categoryHelp: 'Chagua kundi moja au mawili kwa taarifa zinazokuhusu.',

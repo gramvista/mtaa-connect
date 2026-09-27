@@ -6,7 +6,7 @@ export const dynamic='force-dynamic';
 export default async function AdminLayout({children}:{children:React.ReactNode}) {
  const {profile}=await requireAdmin();
  const links=[['/admin',t.dashboard],['/admin/residents',t.residents],['/admin/locations',t.locations],['/admin/groups',t.groupings],['/admin/campaigns',t.campaigns],['/admin/subscriptions',t.subscriptions],['/admin/audit',t.audit],['/admin/settings',t.settings]];
- if(profile.role==='super_admin') links.splice(3,0,['/admin/administrators',t.administrators]);
+ if(profile.role==='super_admin') links.splice(3,0,['/admin/administrators',t.administrators],['/admin/quotas',t.campaignQuotas]);
  return <div className="min-h-screen lg:grid lg:grid-cols-[230px_1fr]">
   <aside className="border-b bg-primary p-5 text-primary-foreground lg:min-h-screen lg:border-b-0">
    <Link href="/admin" className="text-xl font-bold">{t.brand}</Link><p className="mt-2 text-xs opacity-80">{t[profile.role]}</p>
