@@ -37,6 +37,7 @@ export const adminText = {
  smsModeHelp:'Njia ya platform hutumia Sender ID moja ya Mtaa Connect. Njia yako hutumia salio, API key na Sender ID ya mtaa huu pekee.',
  senderId:'Sender ID iliyoidhinishwa',smsApiKey:'Gramvista API key mpya',smsWebhookSecret:'Gramvista webhook secret mpya',
  smsSecretHelp:'Acha sehemu za siri wazi ili kuhifadhi zilizopo. API key na webhook secret zinasimbwa kabla ya kuhifadhiwa.',
+ gramvistaPortal:'Fungua Gramvista SMS',gramvistaBuySms:'Nunua salio la SMS',gramvistaDevelopers:'API na developers',
  smsMtaaOnly:'Mipangilio hii inapatikana kwa msimamizi wa Mtaa mwenye Mtaa uliopangiwa.',invalidSenderId:'Sender ID lazima iwe herufi, namba au nafasi na isizidi herufi 11.',
  invalidSmsApiKey:'Gramvista API key si sahihi.',invalidWebhookSecret:'Webhook secret lazima iwe na angalau herufi 32.',smsEncryptionMissing:'Weka SMS_CREDENTIAL_ENCRYPTION_KEY salama kwenye environment ya server.',
  smsConnectionFailed:'Imeshindikana kuthibitisha account ya Gramvista. Hakiki API key, ruhusa, Sender ID iliyoidhinishwa na muunganisho wa API.',
