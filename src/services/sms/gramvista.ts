@@ -5,7 +5,7 @@ import { parseGramvistaConfig } from './gramvista-config';
 import { SMSProviderError,type SMSProvider,type SMSRequest } from './types';
 
 type Fetcher=typeof fetch;
-const sendSchema=z.object({success:z.literal(true),message_batch_id:z.string().min(1),campaign_id:z.uuid(),status:z.string()}).passthrough();
+const sendSchema=z.object({success:z.literal(true),message_batch_id:z.string().min(1),campaign_id:z.uuid(),status:z.literal('queued')}).passthrough();
 const messageSchema=z.object({message_reference:z.string().min(1),status:z.string()}).passthrough();
 const webhookSchema=z.object({id:z.string().min(1),type:z.enum(['message.delivered','message.failed']),data:z.object({id:z.string().min(1),status:z.string()}).passthrough()}).passthrough();
 const balanceSchema=z.object({available_sms:z.coerce.number().int().nonnegative(),reserved_sms:z.coerce.number().int().nonnegative(),total_sms:z.coerce.number().int().nonnegative()});
@@ -65,7 +65,7 @@ export function gramvistaProvider(options:{env?:Record<string,unknown>;fetcher?:
   let response:Response;
   try{response=await request('/messages',{method:'POST',headers:{'content-type':'application/json','idempotency-key':input.idempotencyKey},body:JSON.stringify({sender_id:config.GRAMVISTA_SMS_SENDER_ID,recipients:[input.phone],message:input.message})});}
   catch{throw new SMSProviderError('Gramvista send outcome is unknown',true);}
-  if(!response.ok){await json(response);throw new SMSProviderError('Gramvista rejected the message',!definiteStatus(response.status));}
+  if(response.status!==201){await json(response);throw new SMSProviderError('Gramvista rejected the message',!definiteStatus(response.status));}
   const sent=sendSchema.parse(await json(response));
   let messagesResponse:Response;
   try{messagesResponse=await request(`/campaigns/${encodeURIComponent(sent.message_batch_id)}/messages`);}

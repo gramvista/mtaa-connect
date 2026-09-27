@@ -9,6 +9,8 @@
 - Trusted callback routes: `/api/webhooks/payments` and `/api/webhooks/sms`.
 - Worker: `POST /api/internal/worker`, authenticated with `Authorization: Bearer <WORKER_SECRET>`.
 
+This `WORKER_SECRET` belongs only to Mtaa Connect and protects Mtaa's queue endpoint. It is not Gramvista's internal worker secret. Never store Gramvista worker credentials, Kilakona credentials, or Gramvista's Supabase service-role key in Mtaa Connect.
+
 The worker expires subscriptions and claims at most 25 eligible queued recipients. Concurrent calls are safe because claims use `SKIP LOCKED`. A provider timeout may have sent a real message, so ambiguous results become `uncertain` and are never retried automatically. Reconcile those records against Gramvista before any manual resend.
 
 ## ClickPesa USSD-PUSH collection
@@ -23,7 +25,7 @@ ClickPesa has no sandbox. `npm run check:clickpesa -- 0712345678` performs a non
 
 ## Gramvista SMS
 
-The customer workspace is live at `https://sms.gramvistaempiregroup.com`. The production adapter uses its currently reachable backend at `https://sscleaiwktklkuxqqndf.supabase.co/functions/v1/public-api/v1`. Gramvista's developer page advertises `https://api.sms.gramvistaempire.com/v1`, but that hostname must not become the default until its DNS is live. The adapter authenticates with a `gvs_live_...` or `gvs_test_...` bearer key, sends each recipient with a stable idempotency key, resolves the returned campaign to the permanent `gvs_msg_...` message reference, and verifies signed delivery webhooks over the exact raw request body.
+The customer workspace is live at `https://sms.gramvistaempiregroup.com`, but it is a website and is never used as an API origin. The production adapter exclusively uses `https://sscleaiwktklkuxqqndf.supabase.co/functions/v1/public-api/v1`. It authenticates with a `gvs_live_...` or `gvs_test_...` bearer key, sends each recipient with a stable idempotency key, treats the exact `201`/`queued` response as asynchronous acceptance rather than delivery, resolves the returned campaign to the permanent `gvs_msg_...` message reference, and verifies signed delivery webhooks over the exact raw request body.
 
 For the shared platform setup:
 

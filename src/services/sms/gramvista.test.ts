@@ -28,6 +28,8 @@ describe('Gramvista SMS provider',()=>{
  it('locks credentials to the official API origins without leaking supplied values',()=>{
   expect(parseGramvistaConfig(env).GRAMVISTA_SMS_SENDER_ID).toBe('MTAACONNECT');
   expect(()=>parseGramvistaConfig({...env,GRAMVISTA_SMS_API_URL:'https://attacker.example/v1'})).toThrow('GRAMVISTA_SMS_API_URL');
+  expect(()=>parseGramvistaConfig({...env,GRAMVISTA_SMS_API_URL:'https://sms.gramvistaempiregroup.com'})).toThrow('GRAMVISTA_SMS_API_URL');
+  expect(()=>parseGramvistaConfig({...env,GRAMVISTA_SMS_API_URL:'https://api.sms.gramvistaempire.com/v1'})).toThrow('GRAMVISTA_SMS_API_URL');
   try{parseGramvistaConfig({...env,GRAMVISTA_SMS_API_KEY:''});expect.fail('missing key should fail');}
   catch(error){expect((error as Error).message).toContain('GRAMVISTA_SMS_API_KEY');expect((error as Error).message).not.toContain(env.GRAMVISTA_SMS_API_KEY);}
  });
@@ -46,7 +48,7 @@ describe('Gramvista SMS provider',()=>{
   const calls:Array<{url:string;init?:RequestInit}>=[];
   const fetcher=vi.fn(async(input:URL|RequestInfo,init?:RequestInit)=>{
    const url=String(input);calls.push({url,init});
-   if(url.endsWith('/messages')&&init?.method==='POST')return json({success:true,message_batch_id:'gvs_cmp_1',campaign_id:'10000000-0000-4000-8000-000000000001',status:'queued'});
+   if(url.endsWith('/messages')&&init?.method==='POST')return json({success:true,message_batch_id:'gvs_cmp_1',campaign_id:'10000000-0000-4000-8000-000000000001',status:'queued'},201);
    if(url.endsWith('/campaigns/gvs_cmp_1/messages'))return json({data:[{message_reference:'gvs_msg_1',status:'queued'}]});
    return json({},500);
   }) as unknown as typeof fetch;

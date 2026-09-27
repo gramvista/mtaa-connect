@@ -5,9 +5,8 @@ export const gramvistaConfigSchema=z.object({
  GRAMVISTA_SMS_API_URL:z.string().trim().transform((value,context)=>{
   try{
    const url=new URL(value);
-   const custom=url.hostname==='api.sms.gramvistaempire.com'&&url.pathname.replace(/\/$/,'')==='/v1';
    const supabase=url.hostname==='sscleaiwktklkuxqqndf.supabase.co'&&url.pathname.replace(/\/$/,'')==='/functions/v1/public-api/v1';
-   if(url.protocol!=='https:'||url.port||url.username||url.password||url.search||url.hash||(!custom&&!supabase))throw new Error();
+   if(url.protocol!=='https:'||url.port||url.username||url.password||url.search||url.hash||!supabase)throw new Error();
    return url.toString().replace(/\/$/,'');
   }catch{context.addIssue({code:'custom',message:'Invalid Gramvista API URL'});return z.NEVER;}
  }),
