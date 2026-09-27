@@ -13,7 +13,7 @@ import { registrationText as t } from '@/i18n/registration';
 import { adminText as a } from '@/i18n/admin';
 import type { GroupingField,GroupingValue,Location } from '@/types/domain';
 
-export function RegistrationForm(){
+export function RegistrationForm({regions}:{regions:Location[]}){
  const router=useRouter();
  const [path,setPath]=useState(emptyPath),[categories,setCategories]=useState<Location[]>([]);
  const [groupFields,setGroupFields]=useState<GroupingField[]>([]),[groupValues,setGroupValues]=useState<Record<string,GroupingValue[]>>({}),[selectedGroups,setSelectedGroups]=useState<Record<string,string>>({});
@@ -57,7 +57,7 @@ export function RegistrationForm(){
  });
  return <><form onSubmit={submit} noValidate className="space-y-7">
   <fieldset disabled={form.formState.isSubmitting} className="space-y-7">
-   <section className="space-y-4"><h2 className="font-semibold">{t.locations}</h2><LocationPicker value={path} onChange={change} required baloziOptional endpoint="/api/public/locations"/><p className="text-sm text-muted-foreground">{t.empty}</p></section>
+   <section className="space-y-4"><h2 className="font-semibold">{t.locations}</h2><LocationPicker value={path} onChange={change} required baloziOptional endpoint="/api/public/locations" initialRegions={regions}/><p className="text-sm text-muted-foreground">{t.empty}</p></section>
    <section className="space-y-4"><h2 className="font-semibold">{t.details}</h2>
     <label className="block text-sm">{a.name}<input className={inputClass} autoComplete="name" maxLength={120} {...form.register('full_name')}/></label>
     <label className="block text-sm">{a.phone}<input className={inputClass} type="tel" inputMode="tel" autoComplete="tel" placeholder="0712 345 678" {...form.register('phone_number')}/></label>
