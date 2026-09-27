@@ -14,6 +14,6 @@ export default async function EditResident({params}:{params:Promise<{id:string}>
  const {data}=await db.from('resident_directory').select('*').eq('id',id).single();if(!data)notFound();
  const resident=data as Resident,path=await locationPath(db,resident.mtaa_id,resident.balozi_area_id);
  return <><h1 className="text-2xl font-bold">{t.editResident}</h1><ResidentForm resident={resident} initialPath={path} superAdmin={profile.role==='super_admin'}/>
- <section className="max-w-3xl border-t pt-6"><h2 className="mb-3 text-lg font-semibold">{t.subscription}</h2><p className="mb-4 text-sm">{t.subscriptionHelp}</p><PaymentForm residentId={id} idempotencyKey={randomUUID()}/></section>
+ <section className="max-w-3xl rounded-xl border border-primary/30 bg-primary/5 p-5"><h2 className="mb-3 text-lg font-semibold">{t.subscription}</h2><p className="mb-4 text-sm">{resident.subscription_status==='active'?t.residentPaymentComplete:t.residentPaymentRequired}</p>{resident.subscription_status!=='active'&&<PaymentForm residentId={id} idempotencyKey={randomUUID()}/>}</section>
  <section className="max-w-3xl border-t pt-6"><ActionForm action={setResidentStatus} label={resident.status==='active'?t.suspend:t.restore}><input type="hidden" name="id" value={id}/><input type="hidden" name="status" value={resident.status==='active'?'suspended':'active'}/></ActionForm></section></>;
 }
