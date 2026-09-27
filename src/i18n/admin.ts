@@ -41,6 +41,7 @@ export const adminText = {
  preview: 'Hakiki wapokeaji', confirm: 'Thibitisha na weka kwenye foleni', recipients: 'Wapokeaji', units: 'Makadirio ya vipande vya SMS',
  costPending: 'Gharama haijapatikana; inahitaji bei rasmi za mtoa huduma.',
  confirmationHelp: 'Wapokeaji wamehesabiwa na seva. Baada ya kuthibitisha, ujumbe utawekwa kwenye foleni. Waliopoteza sifa hawatatumwa; wapokeaji wapya hawataongezwa.',
+ sendQueuedNow:'Tuma ujumbe wa foleni sasa',sendQueuedHelp:'Tuma sasa ujumbe unaosubiri kwenye foleni salama ya Mtaa Connect.',smsSubmitted:'Ujumbe umekabidhiwa Gramvista kwa kutumwa.',smsProcessed:'Ujumbe uliochakatwa:',smsQueueEmpty:'Hakuna ujumbe unaosubiri kutumwa.',smsQueueFailed:'Imeshindikana kuchakata foleni. Hakiki mipangilio ya Gramvista na ujaribu tena.',smsQueuedRetry:'Kampeni imehifadhiwa kwenye foleni, lakini haikuweza kukabidhiwa Gramvista sasa. Bonyeza “Tuma ujumbe wa foleni sasa” kujaribu tena.',
  smsPending: 'Gramvista API imeunganishwa. Ujumbe halisi utatumwa baada ya kuweka API key hai, Sender ID iliyoidhinishwa na salio la SMS.',
  smsSettings:'Unganisha Gramvista SMS',saveSmsSettings:'Hifadhi mipangilio ya SMS',connectGramvista:'Unganisha na Gramvista',smsMode:'Njia ya SMS',
  smsConnectIntro:'Bandika API key yako ya Gramvista hapa. Mtaa Connect itahakikisha salio na Sender ID, kisha utaweza kutuma SMS moja kwa moja.',

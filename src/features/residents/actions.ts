@@ -7,6 +7,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { residentSchema } from './schema';
 import { adminText as t } from '@/i18n/admin';
 import type { ActionState } from '@/types/domain';
+import { processSmsQueue } from '@/services/sms/queue';
 
 export async function saveResident(input:unknown):Promise<ActionState> {
  const {profile}=await requireAdmin();
@@ -20,6 +21,7 @@ export async function saveResident(input:unknown):Promise<ActionState> {
    p_categories:r.category_ids,p_approved:r.approved,p_consent:r.consent,p_id:r.id||null,p_groups:r.group_values,
   });
   if(error) return {error:error.code==='23505'?t.duplicate:t.failedSave};
+  try{await processSmsQueue(25);}catch{/* Resident stays saved; queued welcome SMS remains retryable. */}
   revalidatePath('/admin'); revalidatePath('/admin/residents');
   return {success:t.saved,id:data as string};
  } catch {return {error:t.failedSave};}
@@ -38,6 +40,7 @@ export async function grantResidentAccess(_:ActionState,form:FormData):Promise<A
  if(!parsed.success||profile.role!=='super_admin')return {error:t.invalid};
  const {error}=await createAdminClient().rpc('grant_resident_access',{p_actor:profile.id,p_resident:parsed.data.id});
  if(error)return {error:t.failedSave};
+ try{await processSmsQueue(25);}catch{/* The access grant is durable even if immediate SMS processing fails. */}
  revalidatePath('/admin');revalidatePath('/admin/residents');revalidatePath(`/admin/residents/${parsed.data.id}`);
  return {success:t.residentAccessGranted};
 }
