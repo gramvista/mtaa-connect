@@ -1,0 +1,2 @@
+-- Global categories and welcome template are versioned in migrations.
+-- No fabricated location or resident data. Use the administrator UI or reviewed importer.

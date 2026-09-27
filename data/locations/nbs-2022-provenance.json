@@ -1,0 +1,413 @@
+{
+  "dataset": "nbs-2022-wards-2024",
+  "publisher": "National Bureau of Statistics, Tanzania",
+  "source_url": "https://www.nbs.go.tz/uploads/statistics/documents/en-1714652282-TANZANIA_2022PHC_WARD_SHAPEFILES.zip",
+  "source_sha256": "a81eecf5021d1904d2d57a3c5ea40b8c3f538cd5b227e8d68a302653a6d1466e",
+  "reference_year": 2022,
+  "counts": {
+    "regions": 31,
+    "districts": 150,
+    "councils": 195,
+    "wards_shehia": 4344
+  },
+  "duplicate_names": [
+    [
+      {
+        "OBJECTID_1": "1890",
+        "reg_code": "12",
+        "reg_name": "Mbeya",
+        "dist_code": "02",
+        "dist_name": "Mbeya",
+        "counc_code": "11",
+        "counc_name": "Halmashauri ya Wilaya ya Mbeya",
+        "ward_code": "033",
+        "ward_name": "Tembela",
+        "display_name": "Tembela (Halmashauri ya Wilaya ya Mbeya)"
+      },
+      {
+        "OBJECTID_1": "1905",
+        "reg_code": "12",
+        "reg_name": "Mbeya",
+        "dist_code": "02",
+        "dist_name": "Mbeya",
+        "counc_code": "24",
+        "counc_name": "Halmashauri ya Jiji la Mbeya",
+        "ward_code": "132",
+        "ward_name": "Tembela",
+        "display_name": "Tembela (Halmashauri ya Jiji la Mbeya)"
+      }
+    ],
+    [
+      {
+        "OBJECTID_1": "1894",
+        "reg_code": "12",
+        "reg_name": "Mbeya",
+        "dist_code": "02",
+        "dist_name": "Mbeya",
+        "counc_code": "11",
+        "counc_name": "Halmashauri ya Wilaya ya Mbeya",
+        "ward_code": "181",
+        "ward_name": "Maendeleo",
+        "display_name": "Maendeleo (Halmashauri ya Wilaya ya Mbeya)"
+      },
+      {
+        "OBJECTID_1": "1933",
+        "reg_code": "12",
+        "reg_name": "Mbeya",
+        "dist_code": "02",
+        "dist_name": "Mbeya",
+        "counc_code": "24",
+        "counc_name": "Halmashauri ya Jiji la Mbeya",
+        "ward_code": "362",
+        "ward_name": "Maendeleo",
+        "display_name": "Maendeleo (Halmashauri ya Jiji la Mbeya)"
+      }
+    ],
+    [
+      {
+        "OBJECTID_1": "3453",
+        "reg_code": "22",
+        "reg_name": "Njombe",
+        "dist_code": "01",
+        "dist_name": "Njombe",
+        "counc_code": "22",
+        "counc_name": "Halmashauri ya Mji wa Njombe",
+        "ward_code": "022",
+        "ward_name": "Mjimwema",
+        "display_name": "Mjimwema (Halmashauri ya Mji wa Njombe)"
+      },
+      {
+        "OBJECTID_1": "3466",
+        "reg_code": "22",
+        "reg_name": "Njombe",
+        "dist_code": "01",
+        "dist_name": "Njombe",
+        "counc_code": "32",
+        "counc_name": "Halmashauri ya Mji wa Makambako",
+        "ward_code": "022",
+        "ward_name": "Mjimwema",
+        "display_name": "Mjimwema (Halmashauri ya Mji wa Makambako)"
+      }
+    ]
+  ],
+  "reused_ward_codes": [
+    [
+      {
+        "OBJECTID_1": "1458",
+        "reg_code": "09",
+        "reg_name": "Mtwara",
+        "dist_code": "02",
+        "dist_name": "Newala",
+        "counc_code": "22",
+        "counc_name": "Halmashauri ya Mji wa Newala",
+        "ward_code": "071",
+        "ward_name": "Mnekachi",
+        "display_name": "Mnekachi"
+      },
+      {
+        "OBJECTID_1": "1472",
+        "reg_code": "09",
+        "reg_name": "Mtwara",
+        "dist_code": "02",
+        "dist_name": "Newala",
+        "counc_code": "22",
+        "counc_name": "Halmashauri ya Mji wa Newala",
+        "ward_code": "071",
+        "ward_name": "Mcholi II",
+        "display_name": "Mcholi II"
+      }
+    ],
+    [
+      {
+        "OBJECTID_1": "4077",
+        "reg_code": "52",
+        "reg_name": "Kusini Unguja",
+        "dist_code": "02",
+        "dist_name": "Kusini",
+        "counc_code": "11",
+        "counc_name": "Halmashauri ya Wilaya ya Kusini",
+        "ward_code": "201",
+        "ward_name": "Muungoni",
+        "display_name": "Muungoni"
+      },
+      {
+        "OBJECTID_1": "4083",
+        "reg_code": "52",
+        "reg_name": "Kusini Unguja",
+        "dist_code": "02",
+        "dist_name": "Kusini",
+        "counc_code": "11",
+        "counc_name": "Halmashauri ya Wilaya ya Kusini",
+        "ward_code": "201",
+        "ward_name": "Tasani",
+        "display_name": "Tasani"
+      }
+    ],
+    [
+      {
+        "OBJECTID_1": "4161",
+        "reg_code": "53",
+        "reg_name": "Mjini Magharibi",
+        "dist_code": "02",
+        "dist_name": "Magharibi A",
+        "counc_code": "13",
+        "counc_name": "Baraza la Manispaa Magharibi A",
+        "ward_code": "233",
+        "ward_name": "Muwembemchomeke",
+        "display_name": "Muwembemchomeke"
+      },
+      {
+        "OBJECTID_1": "4163",
+        "reg_code": "53",
+        "reg_name": "Mjini Magharibi",
+        "dist_code": "02",
+        "dist_name": "Magharibi A",
+        "counc_code": "13",
+        "counc_name": "Baraza la Manispaa Magharibi A",
+        "ward_code": "233",
+        "ward_name": "Masingini",
+        "display_name": "Masingini"
+      }
+    ],
+    [
+      {
+        "OBJECTID_1": "4807",
+        "reg_code": "17",
+        "reg_name": "Shinyanga",
+        "dist_code": "03",
+        "dist_name": "Shinyanga",
+        "counc_code": "11",
+        "counc_name": "Halmashauri ya Wilaya ya Shinyanga",
+        "ward_code": "031",
+        "ward_name": "Pandagichiza",
+        "display_name": "Pandagichiza"
+      },
+      {
+        "OBJECTID_1": "4821",
+        "reg_code": "17",
+        "reg_name": "Shinyanga",
+        "dist_code": "03",
+        "dist_name": "Shinyanga",
+        "counc_code": "11",
+        "counc_name": "Halmashauri ya Wilaya ya Shinyanga",
+        "ward_code": "031",
+        "ward_name": "Ilola",
+        "display_name": "Ilola"
+      }
+    ],
+    [
+      {
+        "OBJECTID_1": "4814",
+        "reg_code": "17",
+        "reg_name": "Shinyanga",
+        "dist_code": "03",
+        "dist_name": "Shinyanga",
+        "counc_code": "11",
+        "counc_name": "Halmashauri ya Wilaya ya Shinyanga",
+        "ward_code": "211",
+        "ward_name": "Mwenge",
+        "display_name": "Mwenge"
+      },
+      {
+        "OBJECTID_1": "4832",
+        "reg_code": "17",
+        "reg_name": "Shinyanga",
+        "dist_code": "03",
+        "dist_name": "Shinyanga",
+        "counc_code": "11",
+        "counc_name": "Halmashauri ya Wilaya ya Shinyanga",
+        "ward_code": "211",
+        "ward_name": "Masengwa",
+        "display_name": "Masengwa"
+      }
+    ]
+  ],
+  "regions": [
+    {
+      "code": "01",
+      "name": "Dodoma",
+      "districts": 7,
+      "wards_shehia": 209
+    },
+    {
+      "code": "02",
+      "name": "Arusha",
+      "districts": 6,
+      "wards_shehia": 158
+    },
+    {
+      "code": "03",
+      "name": "Kilimanjaro",
+      "districts": 6,
+      "wards_shehia": 169
+    },
+    {
+      "code": "04",
+      "name": "Tanga",
+      "districts": 8,
+      "wards_shehia": 245
+    },
+    {
+      "code": "05",
+      "name": "Morogoro",
+      "districts": 7,
+      "wards_shehia": 214
+    },
+    {
+      "code": "06",
+      "name": "Pwani",
+      "districts": 7,
+      "wards_shehia": 133
+    },
+    {
+      "code": "07",
+      "name": "Dar es Salaam",
+      "districts": 5,
+      "wards_shehia": 102
+    },
+    {
+      "code": "08",
+      "name": "Lindi",
+      "districts": 5,
+      "wards_shehia": 152
+    },
+    {
+      "code": "09",
+      "name": "Mtwara",
+      "districts": 5,
+      "wards_shehia": 191
+    },
+    {
+      "code": "10",
+      "name": "Ruvuma",
+      "districts": 5,
+      "wards_shehia": 173
+    },
+    {
+      "code": "11",
+      "name": "Iringa",
+      "districts": 3,
+      "wards_shehia": 106
+    },
+    {
+      "code": "12",
+      "name": "Mbeya",
+      "districts": 5,
+      "wards_shehia": 179
+    },
+    {
+      "code": "13",
+      "name": "Singida",
+      "districts": 5,
+      "wards_shehia": 136
+    },
+    {
+      "code": "14",
+      "name": "Tabora",
+      "districts": 7,
+      "wards_shehia": 206
+    },
+    {
+      "code": "15",
+      "name": "Rukwa",
+      "districts": 3,
+      "wards_shehia": 97
+    },
+    {
+      "code": "16",
+      "name": "Kigoma",
+      "districts": 6,
+      "wards_shehia": 139
+    },
+    {
+      "code": "17",
+      "name": "Shinyanga",
+      "districts": 3,
+      "wards_shehia": 130
+    },
+    {
+      "code": "18",
+      "name": "Kagera",
+      "districts": 7,
+      "wards_shehia": 192
+    },
+    {
+      "code": "19",
+      "name": "Mwanza",
+      "districts": 7,
+      "wards_shehia": 191
+    },
+    {
+      "code": "20",
+      "name": "Mara",
+      "districts": 6,
+      "wards_shehia": 178
+    },
+    {
+      "code": "21",
+      "name": "Manyara",
+      "districts": 5,
+      "wards_shehia": 142
+    },
+    {
+      "code": "22",
+      "name": "Njombe",
+      "districts": 4,
+      "wards_shehia": 107
+    },
+    {
+      "code": "23",
+      "name": "Katavi",
+      "districts": 3,
+      "wards_shehia": 58
+    },
+    {
+      "code": "24",
+      "name": "Simiyu",
+      "districts": 5,
+      "wards_shehia": 133
+    },
+    {
+      "code": "25",
+      "name": "Geita",
+      "districts": 5,
+      "wards_shehia": 122
+    },
+    {
+      "code": "26",
+      "name": "Songwe",
+      "districts": 4,
+      "wards_shehia": 94
+    },
+    {
+      "code": "51",
+      "name": "Kaskazini Unguja",
+      "districts": 2,
+      "wards_shehia": 75
+    },
+    {
+      "code": "52",
+      "name": "Kusini Unguja",
+      "districts": 2,
+      "wards_shehia": 63
+    },
+    {
+      "code": "53",
+      "name": "Mjini Magharibi",
+      "districts": 3,
+      "wards_shehia": 121
+    },
+    {
+      "code": "54",
+      "name": "Kaskazini Pemba",
+      "districts": 2,
+      "wards_shehia": 61
+    },
+    {
+      "code": "55",
+      "name": "Kusini Pemba",
+      "districts": 2,
+      "wards_shehia": 68
+    }
+  ]
+}

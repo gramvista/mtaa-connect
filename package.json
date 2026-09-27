@@ -1,0 +1,55 @@
+{
+  "name": "mtaa-connect",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "node --liftoff-only --no-wasm-tier-up node_modules/vitest/vitest.mjs run",
+    "test:watch": "node --liftoff-only --no-wasm-tier-up node_modules/vitest/vitest.mjs",
+    "check:env": "tsx scripts/check-env.ts",
+    "check:clickpesa": "tsx scripts/check-clickpesa-availability.ts",
+    "check:gramvista": "tsx scripts/check-gramvista.ts",
+    "check": "npm run lint && npm run typecheck && npm run test",
+    "build:deploy": "npm run check:env && npm run build",
+    "bootstrap:admin": "tsx scripts/bootstrap-admin.ts",
+    "import:locations": "tsx scripts/import-locations.ts"
+  },
+  "engines": {
+    "node": "24.x"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.9.1",
+    "@radix-ui/react-slot": "^1.3.3",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.117.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.48.0",
+    "next": "16.3.6",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-hook-form": "^7.88.0",
+    "server-only": "^0.0.1",
+    "tailwind-merge": "^3.7.0",
+    "tw-animate-css": "^1.4.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
+    "@next/env": "^16.3.6",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^24.13.6",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.6",
+    "tailwindcss": "^4",
+    "tsx": "^4.23.15",
+    "typescript": "^5",
+    "vitest": "^5.0.1"
+  }
+}
