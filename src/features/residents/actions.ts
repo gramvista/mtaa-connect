@@ -32,3 +32,12 @@ export async function setResidentStatus(_:ActionState,form:FormData):Promise<Act
  if(error) return {error:t.failedSave};
  revalidatePath('/admin/residents');redirect('/admin/residents');
 }
+export async function grantResidentAccess(_:ActionState,form:FormData):Promise<ActionState> {
+ const {profile}=await requireAdmin();
+ const parsed=z.object({id:z.uuid()}).safeParse(Object.fromEntries(form));
+ if(!parsed.success||profile.role!=='super_admin')return {error:t.invalid};
+ const {error}=await createAdminClient().rpc('grant_resident_access',{p_actor:profile.id,p_resident:parsed.data.id});
+ if(error)return {error:t.failedSave};
+ revalidatePath('/admin');revalidatePath('/admin/residents');revalidatePath(`/admin/residents/${parsed.data.id}`);
+ return {success:t.residentAccessGranted};
+}

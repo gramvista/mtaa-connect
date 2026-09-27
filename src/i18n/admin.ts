@@ -29,6 +29,8 @@ export const adminText = {
  residentPaymentNext: 'Hatua inayofuata ni malipo. Baada ya kuhifadhi utafunguliwa ukurasa wa mkazi ili utume ombi la malipo; mkazi hataingia kwenye SMS za mtaa mpaka malipo yathibitishwe.',
  residentPaymentRequired: 'Malipo ya TSh 3,000 yanahitajika kukamilisha usajili. Tuma ombi la malipo sasa. Bila malipo yaliyothibitishwa, mkazi hataongezwa kwa wapokeaji wa SMS.',
  residentPaymentComplete: 'Malipo yamethibitishwa na usajili wa mkazi uko hai. Mkazi anaweza kupokea SMS kulingana na kundi lake.',
+ superAdminResidentGrantHelp: 'Mkazi anayesajiliwa na Msimamizi Mkuu atathibitishwa moja kwa moja na kupewa usajili hai wa miezi 6 bila kusubiri malipo.',
+ approveWithoutPayment: 'Thibitisha bila malipo', approveWithoutPaymentHelp: 'Ni Msimamizi Mkuu pekee anayeweza kuthibitisha mkazi huyu na kumpa usajili hai wa miezi 6 bila malipo.', residentAccessGranted: 'Mkazi amethibitishwa na usajili wa miezi 6 umewashwa.',
  createPayment: 'Andaa ombi la malipo', residentId: 'Kitambulisho cha mkazi', amount: 'Kiasi', provider: 'Mtoa huduma', reference: 'Kumbukumbu ya malipo',
  paymentPending: 'Bonyeza hapa kutuma ombi la malipo la TSh 3,000 kwa namba ya mkazi. Usajili utaanza tu baada ya mtoa huduma kuthibitisha malipo.',
  mockNotice: 'Hali ya majaribio: malipo na SMS za mock si huduma halisi. Usitumie kwa wakazi halisi.',

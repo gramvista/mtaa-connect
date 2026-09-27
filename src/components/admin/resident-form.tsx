@@ -17,7 +17,7 @@ export function ResidentForm({initialPath,resident,superAdmin=false}:{initialPat
  const [creatingLocation,setCreatingLocation]=useState(false);
  const groupIds=resident?.group_value_ids;
  const router=useRouter();
- const form=useForm<ResidentInput>({resolver:zodResolver(residentSchema),defaultValues:{id:resident?.id||'',full_name:resident?.full_name||'',phone_number:resident?.phone_number||'',mtaa_id:initialPath.mtaa,balozi_area_id:initialPath.balozi,category_ids:resident?.category_ids||[],group_values:resident?.group_value_ids||[],consent:false,approved:resident?.registration_status==='approved'}});
+ const form=useForm<ResidentInput>({resolver:zodResolver(residentSchema),defaultValues:{id:resident?.id||'',full_name:resident?.full_name||'',phone_number:resident?.phone_number||'',mtaa_id:initialPath.mtaa,balozi_area_id:initialPath.balozi,category_ids:resident?.category_ids||[],group_values:resident?.group_value_ids||[],consent:false,approved:superAdmin&&!resident||resident?.registration_status==='approved'}});
  useEffect(()=>{
   if(!path.mtaa)return;
   const controller=new AbortController();
@@ -65,7 +65,7 @@ export function ResidentForm({initialPath,resident,superAdmin=false}:{initialPat
    <fieldset><legend className="font-medium">{t.categories}</legend><p className="mt-1 text-sm text-muted-foreground">{t.categoryHelp}</p><div className="mt-3 flex flex-wrap gap-4">{categories.map(c=><label key={c.id} className="flex min-h-11 items-center gap-2 rounded-lg border px-3"><input type="checkbox" value={c.id} {...form.register('category_ids')}/>{c.name}</label>)}</div></fieldset>
    {groupFields.length>0&&<fieldset><legend className="font-medium">{t.residentGroups}</legend><p className="mt-1 text-sm text-muted-foreground">{t.groupsHelp}</p><div className="mt-3 grid gap-4 sm:grid-cols-2">{groupFields.map(field=><label key={field.id} className="block text-sm">{field.name}<select className={inputClass} value={selected[field.id]||''} onChange={e=>chooseGroup(field.id,e.target.value)}><option value="">{t.select}</option>{(groupValues[field.id]||[]).map(value=><option key={value.id} value={value.id}>{value.name}</option>)}</select></label>)}</div></fieldset>}
    <p className="rounded-lg bg-muted p-4 text-sm leading-relaxed">{t.purpose}</p>
-   {!resident&&<p className="rounded-lg border border-primary/30 bg-primary/5 p-4 text-sm leading-relaxed">{t.residentPaymentNext}</p>}
+   {!resident&&<p className="rounded-lg border border-primary/30 bg-primary/5 p-4 text-sm leading-relaxed">{superAdmin?t.superAdminResidentGrantHelp:t.residentPaymentNext}</p>}
    <label className="flex items-start gap-3 text-sm"><input type="checkbox" className="mt-1 size-4 shrink-0" {...form.register('consent')}/>{t.consent}</label>
    <div><label className="flex items-start gap-3 text-sm"><input type="checkbox" className="mt-1 size-4 shrink-0" {...form.register('approved')}/>{t.approved}</label><p className="mt-2 text-xs text-muted-foreground">{t.approvalHelp}</p></div>
   </fieldset>

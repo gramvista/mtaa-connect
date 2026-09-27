@@ -56,6 +56,26 @@ describe('PostgreSQL migrations and security', () => {
     await expect(db.query("select public.manage_profile($1,$2,'Escalated',$3,'active','agent')",[leader,agent,mtaa])).rejects.toThrow('Forbidden');
     await expect(db.query("select public.manage_profile($1,$2,'Bad role',$3,'active','super_admin')",[admin,agent,mtaa])).rejects.toThrow('Invalid staff profile');
   });
+  it('activates residents created by Super Admin and lets only Super Admin grant unpaid access',async()=>{
+    await db.exec('begin');
+    try{
+      const direct=await scalar('select public.save_resident($1,$2,$3,$4,$5,$6,false,true)',[admin,mtaa,balozi,'Direct Grant','+255712345684',[categories[0]]]);
+      expect(await scalar('select registration_status from public.residents where id=$1',[direct])).toBe('approved');
+      expect(await scalar('select subscription_status from public.resident_directory where id=$1',[direct])).toBe('active');
+      const pending=await scalar('select public.save_resident($1,$2,$3,$4,$5,$6,false,true)',[leader,mtaa,balozi,'Manual Grant','+255712345685',[categories[0]]]);
+      expect(await scalar('select subscription_status from public.resident_directory where id=$1',[pending])).toBe('pending');
+      const payment=await scalar("select public.create_payment($1,$2,'pending',$3)",[leader,pending,'10000000-0000-4000-8000-000000000097']);
+      await db.exec('savepoint forbidden_grant');
+      await expect(db.query('select public.grant_resident_access($1,$2)',[leader,pending])).rejects.toThrow('Forbidden');
+      await db.exec('rollback to savepoint forbidden_grant');
+      await db.query('select public.grant_resident_access($1,$2)',[admin,pending]);
+      expect(await scalar('select registration_status from public.residents where id=$1',[pending])).toBe('approved');
+      expect(await scalar('select subscription_status from public.resident_directory where id=$1',[pending])).toBe('active');
+      expect(await scalar('select status from public.payments where id=$1',[payment])).toBe('cancelled');
+      expect(await scalar("select count(*)::text from public.audit_logs where entity_id=$1 and action='resident.access_granted'",[pending])).toBe('1');
+      expect(await scalar("select has_function_privilege('authenticated','public.grant_resident_access(uuid,uuid)','execute')::text")).toBe('false');
+    }finally{await db.exec('rollback');}
+  });
   it('restricts agents to pending registrations in their assigned Mtaa',async()=>{
     await expect(db.query("select public.save_location($1,'balozi_areas','Agent Area',$2)",[agent,mtaa])).rejects.toThrow('Forbidden');
     await expect(db.query('select public.save_resident($1,$2,$3,$4,$5,$6,true,true)',[agent,mtaa,balozi,'Agent Approved','+255712345690',[categories[0]]])).rejects.toThrow('Forbidden');
@@ -408,7 +428,7 @@ describe('PostgreSQL migrations and security', () => {
   });
   it('claims each queued SMS once, records delivery idempotently and excludes expired subscriptions', async () => {
     const first = await db.query<{id:string}>('select * from public.claim_sms(50)');
-    expect(first.rows).toHaveLength(1); // Welcome only; previews remain drafts.
+    expect(first.rows).toHaveLength(2); // Welcome messages for paid and Super-Admin-granted residents; previews remain drafts.
     expect((await db.query('select * from public.claim_sms(50)')).rows).toHaveLength(0);
     await db.query("select public.record_sms_result($1,'mock','sms-1','sent')",[first.rows[0].id]);
     await db.query("select public.record_sms_delivery('mock','sms-1','delivered')");
