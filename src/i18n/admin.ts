@@ -58,7 +58,7 @@ export const adminText = {
  auditAction: 'Tendo', entity: 'Rekodi', loginLink: 'Ingia kama msimamizi',
  savedId: 'Kitambulisho', noAreas: 'Ongeza maeneo na eneo la Balozi kabla ya kusajili mkazi.',
  limitNotice: 'Tumia vichujio kupunguza matokeo. Kurasa zinaonyesha rekodi 25 kwa wakati.',
- welcomeTemplate: 'Ujumbe wa ukaribisho', templateHelp: 'Tumia {{mtaa}} kuingiza jina la mtaa.',
+ welcomeTemplate: 'Ujumbe wa ukaribisho', templateHelp: 'Tumia {{name}} kuingiza jina la kwanza la mkazi na {{mtaa}} kuingiza jina la mtaa.',
  saveTemplate: 'Hifadhi ujumbe', rateLimited: 'Majaribio mengi. Tafadhali subiri dakika 15.',
  addMtaa: 'Ongeza mtaa mpya', addBalozi: 'Ongeza eneo jipya la Balozi',
  saveAndSelect: 'Hifadhi na uchague', chooseExisting: 'Chagua lililopo',

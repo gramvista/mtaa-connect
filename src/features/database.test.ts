@@ -137,6 +137,7 @@ describe('PostgreSQL migrations and security', () => {
       await db.query('select public.save_resident($1,$2,$3,$4,$5,$6,true,true,$7)',[leader,mtaa,balozi,'Awaiting Approval','+255712345687',[categories[0]],rid]);
       expect(await scalar('select private.eligible($1)::text',[rid])).toBe('true');
       expect(await scalar('select count(*)::text from public.sms_campaigns where welcome_resident_id=$1',[rid])).toBe('1');
+      expect(await scalar('select message from public.sms_campaigns where welcome_resident_id=$1',[rid])).toBe('Habari Awaiting wa mtaa Test Mtaa A, karibu Mtaa Connect. Usajili wako umekamilika.');
       expect(await scalar('select count(*)::text from public.subscriptions where resident_id=$1',[rid])).toBe('1');
     }finally{await db.exec('rollback');}
   });
