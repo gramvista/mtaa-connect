@@ -36,6 +36,7 @@ describe('Gramvista SMS provider',()=>{
    ?json({available_sms:100,reserved_sms:5,total_sms:105})
    :json({data:[{sender_name:'MTAACONNECT',status:'approved'}]})) as unknown as typeof fetch;
   await expect(verifyGramvistaAccount({env,fetcher})).resolves.toEqual({balance:{available_sms:100,reserved_sms:5,total_sms:105},senderId:'MTAACONNECT'});
+  await expect(verifyGramvistaAccount({env:{...env,GRAMVISTA_SMS_SENDER_ID:'IGNORED'},fetcher,autoSelectSender:true})).resolves.toEqual({balance:{available_sms:100,reserved_sms:5,total_sms:105},senderId:'MTAACONNECT'});
   const pending=vi.fn(async(input:URL|RequestInfo)=>String(input).endsWith('/balance')
    ?json({available_sms:100,reserved_sms:0,total_sms:100})
    :json({data:[{sender_name:'MTAACONNECT',status:'pending'}]})) as unknown as typeof fetch;

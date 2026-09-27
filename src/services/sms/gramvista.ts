@@ -35,7 +35,7 @@ function verifyWebhook(secret:string,rawBody:string,headers:Headers){
  if(actual.length!==expected.length||!timingSafeEqual(actual,expected))throw new Error('Invalid Gramvista signature');
 }
 
-export async function verifyGramvistaAccount(options:{env:Record<string,unknown>;fetcher?:Fetcher}){
+export async function verifyGramvistaAccount(options:{env:Record<string,unknown>;fetcher?:Fetcher;autoSelectSender?:boolean}){
  const config=parseGramvistaConfig(options.env),fetcher=options.fetcher??fetch;
  const get=async(path:string)=>{
   const response=await fetcher(`${config.GRAMVISTA_SMS_API_URL}${path}`,{headers:{accept:'application/json',authorization:`Bearer ${config.GRAMVISTA_SMS_API_KEY}`},cache:'no-store',redirect:'error',signal:AbortSignal.timeout(20_000)});
@@ -44,7 +44,13 @@ export async function verifyGramvistaAccount(options:{env:Record<string,unknown>
  };
  const [balanceBody,sendersBody]=await Promise.all([get('/balance'),get('/sender-ids')]);
  const balance=balanceSchema.parse(balanceBody),senders=senderListSchema.parse(sendersBody).data;
- const sender=senders.find(item=>item.sender_name===config.GRAMVISTA_SMS_SENDER_ID);
+ const approved=senders.filter(item=>item.status==='approved');
+ const sender=options.autoSelectSender
+  ? approved.length===1?approved[0]:senders.find(item=>item.sender_name===config.GRAMVISTA_SMS_SENDER_ID)
+  : senders.find(item=>item.sender_name===config.GRAMVISTA_SMS_SENDER_ID);
+ if(options.autoSelectSender&&approved.length>1&&
+    !approved.some(item=>item.sender_name===config.GRAMVISTA_SMS_SENDER_ID))
+  throw new Error('Choose one approved Gramvista Sender ID');
  if(!sender||sender.status!=='approved')throw new Error('Gramvista Sender ID is not approved');
  return {balance,senderId:sender.sender_name};
 }
