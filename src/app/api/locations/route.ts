@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { requireAdmin } from '@/features/auth/context';
+import { locationPath } from '@/features/residents/locations';
 
 export async function GET(request:NextRequest) {
  const {db,profile}=await requireAdmin();
@@ -16,7 +17,11 @@ export async function GET(request:NextRequest) {
   else query=query.eq(mapping[table]!,parent!);
  }
  if(['mitaa','balozi_areas','categories','grouping_fields','grouping_values'].includes(table)) query=query.eq('status','active');
- if(table==='mitaa' && profile.role==='mtaa_admin') query=query.eq('id',profile.mtaa_id!);
+ if(profile.role==='mtaa_admin'&&['regions','districts','wards','mitaa'].includes(table)){
+  const path=await locationPath(db,profile.mtaa_id);
+  const scoped={regions:path.region,districts:path.district,wards:path.ward,mitaa:path.mtaa};
+  query=query.eq('id',scoped[table as keyof typeof scoped]);
+ }
  const {data,error}=await query;
  if(error) return Response.json({error:'Query failed'},{status:503});
  return Response.json({rows:data},{headers:{'Cache-Control':'private, no-store'}});

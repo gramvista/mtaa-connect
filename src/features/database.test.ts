@@ -347,6 +347,10 @@ describe('PostgreSQL migrations and security', () => {
       await db.exec('savepoint quota_exceeded');
       await expect(db.query('select public.confirm_campaign($1,$2)',[leader,blocked])).rejects.toThrow('Mtaa campaign limit reached');
       await db.exec('rollback to savepoint quota_exceeded');
+      await db.query("select public.save_mtaa_sms_configuration($1,$2,'own','gramvista','MTAAONE','own-key',null)",[leader,mtaa]);
+      expect(await scalar("select public.mtaa_campaign_quota($1,$2)->>'applies'",[leader,mtaa])).toBe('false');
+      await db.query('select public.confirm_campaign($1,$2)',[leader,blocked]);
+      expect(await scalar('select sms_account_mode from public.sms_campaigns where id=$1',[blocked])).toBe('own');
       await db.exec('savepoint quota_forbidden');
       await expect(db.query('select public.set_mtaa_campaign_limit($1,$2,99)',[leader,mtaa])).rejects.toThrow('Forbidden');
       await db.exec('rollback to savepoint quota_forbidden');

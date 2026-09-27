@@ -12,7 +12,7 @@ export function LocationManagement({superAdmin,initialPath,initialKind}:{superAd
  return <section className="space-y-5 rounded-xl border bg-card p-5">
   <label className="block text-sm">{t.locationType}<select className={inputClass} value={kind} onChange={e=>setKind(e.target.value)}>{(superAdmin?['regions','districts','wards','mitaa','balozi_areas','categories']:['balozi_areas','categories']).map(k=><option key={k} value={k}>{t[k as 'regions']}</option>)}</select></label>
   {kind==='categories'&&superAdmin&&<label className="flex gap-2 text-sm"><input type="checkbox" checked={global} onChange={e=>setGlobal(e.target.checked)}/>{t.global}</label>}
-  {kind!=='regions'&&!(kind==='categories'&&global)&&<LocationPicker value={path} onChange={setPath} level={levels[kind]}/>}
+  {kind!=='regions'&&!(kind==='categories'&&global)&&<LocationPicker value={path} onChange={setPath} level={levels[kind]} lockedMtaa={!superAdmin}/>}
   <form className="flex gap-3"><input type="hidden" name="kind" value={kind}/><input type="hidden" name="parent" value={parent}/>{Object.entries(path).map(([key,value])=><input key={key} type="hidden" name={key} value={value}/>)}<Button size="sm" variant="outline">{t.search}</Button></form>
   <ActionForm action={saveLocation} key={kind+parent}>
    <input type="hidden" name="kind" value={kind}/><input type="hidden" name="parent" value={parent}/>

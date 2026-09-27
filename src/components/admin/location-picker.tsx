@@ -26,10 +26,12 @@ export function LocationSelect({kind,parent,value,onChange,label,name,required=f
   <option value="">{loading?'…':t.select}</option>{available&&rows.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
  </select>{error&&<span role="alert" className="text-destructive">{t.unavailable}</span>}</label>;
 }
-export function LocationPicker({value,onChange,level='balozi',required=false,baloziOptional=false,allowCreate=false,superAdmin=false,onBusy,endpoint='/api/locations'}:{value:LocationPath;onChange:(path:LocationPath)=>void;level?:keyof LocationPath;required?:boolean;baloziOptional?:boolean;allowCreate?:boolean;superAdmin?:boolean;onBusy?:(busy:boolean)=>void;endpoint?:string}) {
+export function LocationPicker({value,onChange,level='balozi',required=false,baloziOptional=false,allowCreate=false,superAdmin=false,lockedMtaa=false,onBusy,endpoint='/api/locations'}:{value:LocationPath;onChange:(path:LocationPath)=>void;level?:keyof LocationPath;required?:boolean;baloziOptional?:boolean;allowCreate?:boolean;superAdmin?:boolean;lockedMtaa?:boolean;onBusy?:(busy:boolean)=>void;endpoint?:string}) {
  const [revision,setRevision]=useState(0);
  const levels:[keyof LocationPath,string,string][]=[['region','regions',t.region],['district','districts',t.district],['ward','wards',t.ward],['mtaa','mitaa',t.mtaa],['balozi','balozi_areas',t.balozi]];
- return <div className="grid gap-4 sm:grid-cols-2">{levels.slice(0,levels.findIndex(([key])=>key===level)+1).map(([key,kind,label],index)=>{
+ const visible=levels.slice(0,levels.findIndex(([key])=>key===level)+1).filter(([key])=>!lockedMtaa||key==='balozi');
+ return <div className="grid gap-4 sm:grid-cols-2">{lockedMtaa&&<p className="rounded-lg bg-muted p-3 text-sm sm:col-span-2">{t.assignedMtaaOnly}</p>}{visible.map(([key,kind,label])=>{
+  const index=levels.findIndex(([candidate])=>candidate===key);
   const parent=index?value[levels[index-1][0]]:undefined;
   const change=(id:string)=>{const next={...value,[key]:id};for(let i=index+1;i<levels.length;i++)next[levels[i][0]]='';onChange(next);};
   return <div key={key+parent} className="space-y-2">
