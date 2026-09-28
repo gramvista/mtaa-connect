@@ -55,7 +55,7 @@ Each Mtaa buys credits and requests Sender IDs in its own Gramvista customer acc
 
 ## Scheduler
 
-Invoke `POST /api/internal/worker` every few minutes with `Authorization: Bearer <WORKER_SECRET>`. Do not place the secret in a URL. The production application runs on Cloudflare Workers; configure a scheduler that can make this authenticated POST request and confirm its frequency limits before choosing the schedule.
+Cloudflare invokes `POST /api/internal/worker` every five minutes through the Worker's `scheduled` handler. The handler sends `Authorization: Bearer <WORKER_SECRET>` and never places the secret in a URL. Keep the Cron Trigger and Worker secret configured together when creating another environment.
 
 ## Development-only mocks
 

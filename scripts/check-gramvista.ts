@@ -1,4 +1,5 @@
-import { loadEnvConfig } from '@next/env';
+import nextEnv from '@next/env';
+const { loadEnvConfig } = nextEnv;
 import { z } from 'zod';
 import { parseGramvistaConfig } from '../src/services/sms/gramvista-config';
 

@@ -214,7 +214,7 @@ The payment callback boundary can activate a subscription only after the adapter
 
 Campaign drafts resolve recipients on the server. Explicit confirmation freezes the preview set for queuing; newly eligible residents are not added. Eligibility is checked again when claiming work. Uncertain sends are never automatically resent. Estimated SMS units account for GSM extension characters and Unicode in administrator campaigns; costs await official tariffs.
 
-A protected scheduler must call `POST /api/internal/worker` periodically to expire subscriptions and process batches. Eligibility also checks timestamps directly, so overdue maintenance never makes expired subscriptions eligible. Configure `Authorization: Bearer <WORKER_SECRET>`. No production scheduler has been provisioned yet.
+A protected scheduler must process `POST /api/internal/worker` periodically to expire subscriptions and process batches. Eligibility also checks timestamps directly, so overdue maintenance never makes expired subscriptions eligible. Production uses a Cloudflare Cron Trigger every five minutes; manual calls still require `Authorization: Bearer <WORKER_SECRET>`.
 
 ## Checks and commands
 
@@ -242,7 +242,7 @@ On macOS/Linux, use `npm` / `npx` without `.cmd`. Vitest uses one thread worker 
 - The Worker route `mtaa.gramvistaempiregroup.com/*` uses the existing proxied Cloudflare DNS record.
 - Configure Supabase Auth site URL and exact approved redirect URLs for the deployment.
 - Register the ClickPesa callback at `/api/webhooks/payments` and Gramvista callback at `/api/webhooks/sms` on the production domain.
-- Schedule authenticated `POST /api/internal/worker` with `Authorization: Bearer <WORKER_SECRET>` as a delivery fallback.
+- Cloudflare invokes the authenticated queue worker every five minutes through the Worker `scheduled` handler. Keep `WORKER_SECRET` configured as a Worker secret.
 - Configure the first Super Admin, genuine locations and a staging pilot before collecting resident data.
 - Run real Supabase sessions for two tenants, a suspended user and Super Admin before pilot release. Verify backup/restore, provider behavior, operational consent policy and retention requirements with the people responsible for the service.
 
@@ -256,5 +256,5 @@ See [security policy documentation](docs/security.md). Implementation references
 - All 64 tests passed, including execution of all sixteen migrations, agent and tenant isolation, separate agent payer phones, ClickPesa initiation/reconciliation, per-Mtaa SMS credential isolation, Gramvista account/Sender ID verification, sending/signatures, targeting and administrative scope checks in PostgreSQL/PGlite.
 - Production build passed.
 - Production HTTP checks passed for the landing page, login configuration help, protected-route redirects and rejection of unconfigured webhook/worker requests.
-- A headless-browser screenshot attempt was blocked by execution policy; authenticated browser/device testing is not claimed.
-- The first fifteen migrations were previously exercised against the intended hosted project. The sixteenth per-Mtaa SMS migration is not deployed because the currently authenticated Supabase CLI account receives HTTP 403 for that project. ClickPesa authentication and a non-charging channel preview succeeded; a real request reached HaloPesa and was rejected for insufficient funds, so a successful debit/settlement is not claimed. Gramvista's API is online and rejects unauthenticated access correctly, but no Mtaa Connect Gramvista API key, approved Sender ID or funded wallet is available for a real send. No production deployment was performed.
+- Production is deployed to Cloudflare Workers at `https://mtaa.gramvistaempiregroup.com`, with a five-minute Cron Trigger and production Auth redirects configured.
+- Gramvista authentication succeeds, `TAARIFA` is approved, and the configured wallet is reachable. ClickPesa credentials remain live-provider dependencies; complete a small successful transaction and configure its dashboard callback before treating automated settlement as accepted end-to-end.

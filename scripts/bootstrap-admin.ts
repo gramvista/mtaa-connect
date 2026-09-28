@@ -1,4 +1,5 @@
-import { loadEnvConfig } from '@next/env';
+import nextEnv from '@next/env';
+const { loadEnvConfig } = nextEnv;
 import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 loadEnvConfig(process.cwd());
