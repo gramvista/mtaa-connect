@@ -45,3 +45,6 @@ supabase/.branches/
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+/dist/
+.vinext/
+.wrangler/

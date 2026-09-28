@@ -236,14 +236,13 @@ On macOS/Linux, use `npm` / `npx` without `.cmd`. Vitest uses one thread worker 
 ## Deployment
 
 - Push the `main` branch to a private GitHub repository; GitHub Actions runs checks and the production build on every push and pull request.
-- Import that repository into Vercel: Node 24, install `npm ci`, build `npm run build:deploy`.
-- Configure environment values separately for development, preview and production.
-- Production app URL: `https://mtaaconnect.gramvistaempiregroup.com`.
-- Add that domain to Vercel and apply its provided DNS records. No deployment or DNS change was performed here.
+- The production app is deployed as the Cloudflare Worker `mtaa-connect` with `npm run build:vinext`, followed by `wrangler deploy --config dist/server/wrangler.json`.
+- Configure production secrets with `wrangler secret put`; do not commit `.env.local` or provider credentials.
+- Production app URL: `https://mtaa.gramvistaempiregroup.com`.
+- The Worker route `mtaa.gramvistaempiregroup.com/*` uses the existing proxied Cloudflare DNS record.
 - Configure Supabase Auth site URL and exact approved redirect URLs for the deployment.
-- Sign into the Supabase account authorized for `mjeludbywzefsawultaj`, review the migration dry-run, and apply migration `202609260006_mtaa_sms_settings.sql` before enabling SMS.
 - Register the ClickPesa callback at `/api/webhooks/payments` and Gramvista callback at `/api/webhooks/sms` on the production domain.
-- Schedule authenticated `POST /api/internal/worker`; if using Vercel Cron, set `CRON_SECRET` and `WORKER_SECRET` to the same random secret.
+- Schedule authenticated `POST /api/internal/worker` with `Authorization: Bearer <WORKER_SECRET>` as a delivery fallback.
 - Configure the first Super Admin, genuine locations and a staging pilot before collecting resident data.
 - Run real Supabase sessions for two tenants, a suspended user and Super Admin before pilot release. Verify backup/restore, provider behavior, operational consent policy and retention requirements with the people responsible for the service.
 

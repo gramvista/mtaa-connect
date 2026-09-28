@@ -55,7 +55,7 @@ Each Mtaa buys credits and requests Sender IDs in its own Gramvista customer acc
 
 ## Scheduler
 
-Invoke `POST /api/internal/worker` every few minutes with the bearer token. Do not place the secret in a URL. On Vercel, set `CRON_SECRET` and `WORKER_SECRET` to the same random value if Vercel Cron is used, because Vercel sends `CRON_SECRET` as the Authorization bearer token. Confirm the plan's cron-frequency limits before choosing the schedule.
+Invoke `POST /api/internal/worker` every few minutes with `Authorization: Bearer <WORKER_SECRET>`. Do not place the secret in a URL. The production application runs on Cloudflare Workers; configure a scheduler that can make this authenticated POST request and confirm its frequency limits before choosing the schedule.
 
 ## Development-only mocks
 
