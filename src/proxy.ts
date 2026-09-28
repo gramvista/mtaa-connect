@@ -7,5 +7,5 @@ export async function proxy(request: NextRequest) {
 
 // Only auth and administrator data routes need session refresh.
 export const config = {
-  matcher: ["/admin/:path*", "/agent/:path*", "/super-admin/:path*", "/login", "/auth/:path*", "/api/locations", "/api/resident-options"],
+  matcher: ["/admin/:path*", "/agent/:path*", "/super-admin/:path*", "/login", "/auth/:path*", "/reset-password", "/api/locations", "/api/resident-options"],
 };

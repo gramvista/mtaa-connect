@@ -7,6 +7,7 @@ import { requireStaff } from './context';
 import { adminText as t } from '@/i18n/admin';
 import type { ActionState } from '@/types/domain';
 import { createHash } from 'node:crypto';
+import { callbackUrl } from './urls';
 
 export async function login(_: ActionState, form: FormData): Promise<ActionState> {
  const parsed=z.object({email:z.email().max(254),password:z.string().min(1).max(256)}).safeParse(Object.fromEntries(form));
@@ -30,6 +31,33 @@ export async function login(_: ActionState, form: FormData): Promise<ActionState
 }
 export async function logout() {
  const client=await createClient(); await client.auth.signOut(); redirect('/login');
+}
+export async function requestPasswordReset(_:ActionState,form:FormData):Promise<ActionState>{
+ const parsed=z.email().max(254).safeParse(form.get('email'));
+ if(!parsed.success)return {error:t.invalid};
+ try{
+  const service=createAdminClient();
+  const key=createHash('sha256').update(parsed.data.toLowerCase()).digest('hex');
+  const {data:allowed,error:limitError}=await service.rpc('consume_rate_limit',{p_key:'password-reset:'+key,p_limit:3,p_window:3600});
+  if(limitError)return {error:t.unavailable};
+  if(!allowed)return {error:t.rateLimited};
+  const client=await createClient();
+  await client.auth.resetPasswordForEmail(parsed.data,{redirectTo:callbackUrl('/reset-password')});
+  return {success:t.resetLinkSent};
+ }catch{return {error:t.unavailable};}
+}
+export async function resetPassword(_:ActionState,form:FormData):Promise<ActionState>{
+ const parsed=z.object({password:z.string().min(8).max(128),confirmation:z.string().min(8).max(128)}).safeParse(Object.fromEntries(form));
+ if(!parsed.success||parsed.data.password!==parsed.data.confirmation)return {error:t.passwordMismatch};
+ const client=await createClient();
+ const {data:{user}}=await client.auth.getUser();
+ if(!user)return {error:t.resetLinkInvalid};
+ const {data:profile}=await client.from('profiles').select('status').eq('id',user.id).maybeSingle();
+ if(!profile||profile.status!=='active'){await client.auth.signOut();return {error:t.resetLinkInvalid};}
+ const {error}=await client.auth.updateUser({password:parsed.data.password});
+ if(error)return {error:t.failedSave};
+ await client.auth.signOut();
+ redirect('/login?reset=1');
 }
 export async function changePassword(_:ActionState,form:FormData):Promise<ActionState> {
  const {userClient}=await requireStaff();
