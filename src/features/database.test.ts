@@ -426,9 +426,12 @@ describe('PostgreSQL migrations and security', () => {
     await expect(asUser(leader,'delete from public.audit_logs')).rejects.toThrow();
     await expect(asUser(leader,"select public.settle_payment('10000000-0000-4000-8000-000000000009','mock','r','e',3000,'TZS')")).rejects.toThrow();
   });
-  it('claims each queued SMS once, records delivery idempotently and excludes expired subscriptions', async () => {
-    const first = await db.query<{id:string}>('select * from public.claim_sms(50)');
-    expect(first.rows).toHaveLength(2); // Welcome messages for paid and Super-Admin-granted residents; previews remain drafts.
+  it('claims each queued SMS once, personalizes campaigns, records delivery idempotently and excludes expired subscriptions', async () => {
+    const personalized=await scalar("select public.preview_campaign($1,$2,'Personalized','Taarifa ya mkutano','selected',null,null,$3,1)",[leader,mtaa,[resident]]);
+    await db.query('select public.confirm_campaign($1,$2)',[leader,personalized]);
+    const first = await db.query<{id:string;message:string}>('select * from public.claim_sms(50)');
+    expect(first.rows).toHaveLength(3); // Two welcome messages and one personalized administrator campaign.
+    expect(first.rows.some(row=>row.message==='Habari Resident wa mtaa Test Mtaa A, Taarifa ya mkutano')).toBe(true);
     expect((await db.query('select * from public.claim_sms(50)')).rows).toHaveLength(0);
     await db.query("select public.record_sms_result($1,'mock','sms-1','sent')",[first.rows[0].id]);
     await db.query("select public.record_sms_delivery('mock','sms-1','delivered')");

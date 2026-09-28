@@ -10,7 +10,7 @@ export function CampaignForm({initialPath,lockMtaa=false}:{initialPath:LocationP
  const targets=[['all',t.targetAll],['balozi',t.targetBalozi],['category',t.targetCategory],['balozi_category',t.targetCombined],['group',t.targetGroup],['selected',t.targetSelected]];
  return <ActionForm action={previewCampaign} label={t.preview}>
   <label className="block text-sm">{t.title}<input name="title" required minLength={2} maxLength={120} className={inputClass}/></label>
-  <label className="block text-sm">{t.message}<textarea name="message" rows={5} required maxLength={1000} className={inputClass}/></label>
+  <label className="block text-sm">{t.message}<textarea name="message" rows={5} required maxLength={1000} className={inputClass}/><span className="mt-1 block text-xs text-muted-foreground">{t.personalizedMessageHelp}</span></label>
   <label className="block text-sm">{t.target}<select name="type" value={type} onChange={e=>setType(e.target.value)} className={inputClass}>{targets.map(([key,label])=><option key={key} value={key}>{label}</option>)}</select></label>
   <p className="rounded-lg bg-muted p-4 text-sm">{t.campaignAudienceHelp}</p>
   {(!lockMtaa||['balozi','balozi_category'].includes(type))&&<LocationPicker value={path} onChange={p=>{if(p.mtaa!==path.mtaa){setCategory('');setGroupField('');setGroupValue('');}setPath(p);}} level={['balozi','balozi_category'].includes(type)?'balozi':'mtaa'} required lockedMtaa={lockMtaa}/>}
