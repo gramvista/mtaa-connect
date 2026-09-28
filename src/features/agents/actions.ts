@@ -1,4 +1,5 @@
 'use server';
+import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { requireAgent } from '@/features/auth/context';
 import { paymentProvider } from '@/services/payments/provider';
@@ -8,9 +9,9 @@ import { adminText as t } from '@/i18n/admin';
 import type { ActionState } from '@/types/domain';
 
 export async function registerByAgent(input:unknown):Promise<ActionState>{
- const {profile,db}=await requireAgent();
+ const {profile,db,assignments}=await requireAgent();
  const parsed=agentRegistrationSchema.safeParse(input);
- if(!parsed.success||parsed.data.mtaa_id!==profile.mtaa_id)return {error:t.invalid};
+ if(!parsed.success||!assignments.some(a=>a.mtaa_id===parsed.data.mtaa_id))return {error:t.invalid};
  const r=parsed.data;
  try{
   const provider=paymentProvider();
@@ -26,4 +27,13 @@ export async function registerByAgent(input:unknown):Promise<ActionState>{
   revalidatePath('/agent');
   return {success:provider.name==='pending'?t.agentPaymentPending:t.agentRegistrationSaved,id:result.resident_id,url:initiated.checkoutUrl};
  }catch{return {error:t.unavailable};}
+}
+
+export async function updateOwnTask(_:ActionState,form:FormData):Promise<ActionState>{
+ const {profile,db}=await requireAgent();
+ const parsed=z.object({id:z.uuid(),status:z.enum(['in_progress','completed'])}).safeParse(Object.fromEntries(form));
+ if(!parsed.success)return {error:t.invalid};
+ const {error}=await db.rpc('set_agent_task_status',{p_actor:profile.id,p_task:parsed.data.id,p_status:parsed.data.status});
+ if(error)return {error:t.failedSave};
+ revalidatePath('/agent/tasks');revalidatePath('/agent');return {success:t.saved};
 }

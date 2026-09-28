@@ -1,4 +1,4 @@
-export type Profile = { id: string; full_name: string; role: 'super_admin' | 'mtaa_admin' | 'agent'; mtaa_id: string | null; status: 'active' | 'suspended' };
+export type Profile = { id: string; full_name: string; email?: string | null; role: 'super_admin' | 'mtaa_admin' | 'agent'; mtaa_id: string | null; status: 'active' | 'suspended' };
 export type Location = { id: string; name: string; status?: string; region_id?: string; district_id?: string; ward_id?: string; mtaa_id?: string | null; balozi_name?: string };
 export type GroupingField = { id: string; mtaa_id: string | null; name: string; status: string };
 export type GroupingValue = { id: string; field_id: string; name: string; status: string };
@@ -11,3 +11,5 @@ export type Resident = {
 export type Campaign = { id: string; mtaa_id: string; title: string; message: string; status: string; total_recipients: number; units_per_message: number; sent_count: number; delivered_count: number; failed_count: number; created_at: string };
 export type ActionState = { error?: string; success?: string; id?: string; url?: string };
 export type AgentCommission = { id:string;amount:300;currency:'TZS';status:'earned'|'paid'|'cancelled';earned_at:string;paid_at:string|null;resident_id:string;payment_id:string };
+export type AgentAssignment = { id:string;agent_id:string;mtaa_id:string;status:'active'|'inactive';mitaa?:{name:string}|null };
+export type AgentTask = { id:string;title:string;description:string;agent_id:string;status:'pending'|'in_progress'|'completed'|'cancelled';priority:'low'|'normal'|'high';due_at:string|null;created_at:string;agent_task_mitaa?:{mtaa_id:string;mitaa?:{name:string}|null}[] };

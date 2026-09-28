@@ -4,7 +4,7 @@ export const adminText = {
  loginTitle: 'Ingia kwenye usimamizi', loginDescription: 'Kwa viongozi wa mtaa na wasimamizi walioidhinishwa.',
  invalidLogin: 'Barua pepe au nenosiri si sahihi, au akaunti haijaidhinishwa.',
  forgotPassword:'Umesahau nenosiri?',forgotPasswordTitle:'Rejesha nenosiri',forgotPasswordHelp:'Weka barua pepe ya akaunti yako. Tutatuma kiungo salama cha kuweka nenosiri jipya.',sendResetLink:'Tuma kiungo',resetLinkSent:'Ikiwa akaunti hiyo ipo, kiungo cha kurejesha nenosiri kimetumwa.',backToLogin:'Rudi kwenye kuingia',resetPasswordTitle:'Weka nenosiri jipya',resetPasswordHelp:'Chagua nenosiri jipya lenye angalau herufi 8.',confirmPassword:'Rudia nenosiri',saveNewPassword:'Hifadhi nenosiri jipya',passwordMismatch:'Nenosiri na uthibitisho wake havifanani.',resetLinkInvalid:'Kiungo hiki si sahihi au muda wake umeisha. Omba kiungo kipya.',passwordResetComplete:'Nenosiri limebadilishwa. Sasa unaweza kuingia.',accountConfirmed:'Akaunti imethibitishwa. Sasa unaweza kuingia.',confirmationFailed:'Kiungo cha uthibitisho si sahihi au muda wake umeisha.',
- setup: 'Muunganisho wa Supabase haujakamilika. Weka URL na funguo za API kwenye .env.local, kisha tumia migrations na uunde msimamizi wa kwanza kulingana na README.',
+ setup: 'Mfumo haujawa tayari kwa sasa. Tafadhali wasiliana na msaada wa Mtaa Connect.',
  dashboard: 'Muhtasari', residents: 'Wakazi', newResident: 'Sajili mkazi', editResident: 'Hariri mkazi',
  locations: 'Maeneo', groupings: 'Vikundi', categories: 'Makundi', administrators: 'Wasimamizi', subscriptions: 'Usajili na malipo',
  campaigns: 'Kampeni za SMS', newCampaign: 'Andaa SMS', audit: 'Kumbukumbu', settings: 'Mipangilio',
@@ -58,7 +58,7 @@ export const adminText = {
  smsConnectionFailed:'Imeshindikana kuthibitisha account ya Gramvista. Hakiki API key, ruhusa, Sender ID iliyoidhinishwa na muunganisho wa API.',
  sent: 'Zimetumwa', delivered: 'Zimefika', failed: 'Zimeshindwa', history: 'Historia ya uwasilishaji', created: 'Tarehe',
  saved: 'Imehifadhiwa.', invalid: 'Hakiki taarifa ulizoingiza.', failedSave: 'Imeshindikana kuhifadhi. Hakiki eneo, ruhusa, taarifa zinazojirudia na hali ya rekodi.',
- duplicate: 'Namba hii tayari imesajiliwa katika mtaa huu.', unavailable: 'Huduma haijapatikana. Hakiki muunganisho na migrations.',
+ duplicate: 'Namba hii tayari imesajiliwa katika mtaa huu.', unavailable: 'Huduma haijapatikana kwa sasa. Tafadhali jaribu tena.',
  newPassword: 'Nenosiri jipya (angalau herufi 8)', changePassword: 'Badilisha nenosiri', role: 'Jukumu', super_admin: 'Msimamizi mkuu', mtaa_admin: 'Msimamizi / Mwenyekiti wa mtaa', agent: 'Wakala wa usajili',
  paymentStatus: 'Hali ya malipo', successful: 'Yamefanikiwa', cancelled: 'Yamefutwa', queued: 'Kwenye foleni', draft: 'Rasimu', processing: 'Yanachakatwa', completed: 'Imekamilika', partially_failed: 'Baadhi zimeshindwa', uncertain: 'Inahitaji uhakiki',
  security: 'Kila tendo hukaguliwa na seva. Mkazi hawezi kupokea kampeni bila makazi kuthibitishwa na usajili hai.',
@@ -71,7 +71,7 @@ export const adminText = {
  saveAndSelect: 'Hifadhi na uchague', chooseExisting: 'Chagua lililopo',
  inlineLocationHelp: 'Eneo litahifadhiwa na kupatikana kwa usajili mwingine, hata kama hutaendelea kuhifadhi mkazi huyu.',
  agentsAndAdmins: 'Wasimamizi na mawakala', agentDashboard: 'Dashibodi ya wakala', agentRegister: 'Sajili mkazi mpya',
- agentHelp: 'Msimamizi mkuu anaweza kuunda Mwenyekiti/Msimamizi wa mtaa au Wakala wa usajili na kumteua kwenye Mtaa mmoja.',
+ agentHelp: 'Msimamizi mkuu anaweza kuunda Mwenyekiti wa mtaa au Wakala. Mwenyekiti ana Mtaa mmoja; wakala anaweza kupangiwa Mitaa kadhaa.',
  commission: 'Kamisheni', commissionRate: 'TSh 300 kwa kila malipo ya usajili ya TSh 3,000 yaliyothibitishwa.',
  registrations: 'Usajili uliofanywa', successfulRegistrations: 'Usajili uliolipiwa', pendingPayments: 'Malipo yanayosubiri',
  earnedTotal: 'Kamisheni yote', paidTotal: 'Iliyolipwa', commissionBalance: 'Salio la kamisheni',
@@ -80,5 +80,6 @@ export const adminText = {
  agentRegistrationHelp: 'Mkazi atasubiri uthibitisho wa uongozi. Kamisheni ya TSh 300 itawekwa baada ya malipo ya TSh 3,000 kuthibitishwa na mtoa huduma.',
  payerPhone:'Namba ya anayelipa',payerPhoneHelp:'USSD ya ClickPesa itatumwa kwenye namba hii; inaweza kuwa tofauti na namba ya mkazi.',
  ownRegistrations: 'Usajili wangu wa karibuni', noCommissionYet: 'Hakuna kamisheni iliyopatikana bado.',
+ menu:'Fungua menyu',tasks:'Kazi za mawakala',tasksHelp:'Panga kazi kwa wakala na Mitaa aliyopewa, kisha fuatilia utekelezaji.',createTask:'Panga kazi mpya',taskDescription:'Maelezo ya kazi',priority:'Kipaumbele',dueDate:'Mwisho wa kazi',assignedMitaa:'Mitaa ya kazi',noAssignments:'Wakala huyu hajapangiwa Mtaa.',normal:'Kawaida',high:'Juu',low:'Chini',inProgress:'Inaendelea',updateStatus:'Badilisha hali',confirmTaskUpdate:'Una uhakika unataka kubadilisha hali ya kazi?',startTask:'Anza kazi',completeTask:'Kamilisha kazi',confirmTaskComplete:'Thibitisha kuwa kazi hii imekamilika.',assignments:'Mitaa aliyopewa',addAssignment:'Ongeza Mtaa',removeAssignment:'Ondoa',confirmRemoveAssignment:'Una uhakika unataka kuondoa Mtaa huu kwa wakala?',markPaid:'Weka kuwa imelipwa',confirmMarkPaid:'Thibitisha kuwa kamisheni hii imelipwa nje ya mfumo.',deactivate:'Zima akaunti',confirmDeactivate:'Una uhakika unataka kusimamisha akaunti hii? Hataweza kuingia au kutumia mfumo.',activate:'Washa akaunti',activity:'Shughuli',noActivity:'Hakuna shughuli za karibuni.',contact:'Mawasiliano',filterRole:'Chuja jukumu',filterStatus:'Chuja hali',allRoles:'Majukumu yote',allStatuses:'Hali zote',
 } as const;
 export function statusLabel(value: string) { return adminText[value as keyof typeof adminText] ?? value; }

@@ -10,9 +10,9 @@ const sw = {
   title: "Mtaa wako. Taarifa zako. Pamoja.",
   description: "Njia rahisi ya kupokea taarifa muhimu kutoka kwa uongozi wa mtaa wako kupitia SMS. Bila programu ya simu. Bila intaneti kupokea SMS.",
   status: "Usajili wa wakazi",
-  statusDetail: "Jisajili bila akaunti. Ada ni TSh 3,000 kwa miezi 6; huduma inahitaji malipo yaliyothibitishwa na ClickPesa pamoja na uhakiki wa mtaa. SMS zitaanza baada ya huduma ya Gramvista ya mtaa kuwashwa.",
+  statusDetail: "Jisajili bila akaunti. Ada ni TSh 3,000 kwa miezi 6; usajili wako utaanza baada ya malipo na makazi yako kuthibitishwa.",
   howTitle: "Mawasiliano rahisi kwa kila mkazi",
-  howDescription: "Huduma inapozinduliwa, hatua hizi zitakuunganisha na taarifa za mtaa wako.",
+  howDescription: "Fuata hatua hizi kujiunga na kupokea taarifa muhimu za mtaa wako.",
   steps: [
     { title: "Chagua mtaa wako", description: "Tambua mkoa, wilaya, kata, mtaa na eneo lako la Balozi." },
     { title: "Kamilisha usajili", description: "Weka jina na namba ya simu, toa ridhaa na fuata hatua za uthibitisho wa mtaa wako." },
@@ -41,7 +41,7 @@ const en: Dictionary = {
   title: "Your street. Your updates. Together.",
   description: "A simple way to receive important updates from your Mtaa leadership by SMS. No mobile app. No internet needed to receive messages.",
   status: "Resident registration",
-  statusDetail: "Register without an account. The fee is TSh 3,000 for six months; service requires verified ClickPesa payment and Mtaa approval. SMS delivery starts after the Mtaa's Gramvista service is activated.",
+  statusDetail: "Register without an account. The fee is TSh 3,000 for six months; membership starts after payment and residence approval.",
   howTitle: "Simple communication for every resident",
   howDescription: "When the service launches, these steps will connect you to your community updates.",
   steps: [

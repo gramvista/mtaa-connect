@@ -6,10 +6,10 @@ import type { ActionState } from '@/types/domain';
 import { adminText as t } from '@/i18n/admin';
 
 export const inputClass='mt-1 block min-h-11 w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring';
-export function ActionForm({action,children,label=t.save,className='space-y-4'}:{action:(state:ActionState,form:FormData)=>Promise<ActionState>;children:ReactNode;label?:string;className?:string}) {
+export function ActionForm({action,children,label=t.save,className='space-y-4',confirmMessage}:{action:(state:ActionState,form:FormData)=>Promise<ActionState>;children:ReactNode;label?:string;className?:string;confirmMessage?:string}) {
  const [state,formAction,pending]=useActionState(action,{});
  const success=state.success?`${state.success}${state.id?` (${state.id})`:''}`:'';
- return <form action={formAction} className={className}>
+ return <form action={formAction} className={className} onSubmit={event=>{if(confirmMessage&&!window.confirm(confirmMessage))event.preventDefault();}}>
   <fieldset disabled={pending} className="space-y-4">{children}</fieldset>
   <p role="alert" hidden={!state.error} className="text-sm text-destructive"><span>{state.error||''}</span></p>
   <p role="status" hidden={!success} className="text-sm text-primary"><span>{success}</span></p>
