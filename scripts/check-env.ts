@@ -1,8 +1,9 @@
-import { loadEnvConfig } from "@next/env";
+import nextEnv from "@next/env";
 import { parsePublicEnv } from "../src/config/env-schema";
 import { parseClickPesaConfig } from "../src/services/payments/clickpesa-config";
 import { parseGramvistaConfig } from "../src/services/sms/gramvista-config";
 
+const { loadEnvConfig } = nextEnv;
 loadEnvConfig(process.cwd(), process.env.NODE_ENV !== "production");
 try {
   parsePublicEnv(process.env);

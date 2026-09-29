@@ -5,6 +5,7 @@ import { requireAdmin } from '@/features/auth/context';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { adminText as t } from '@/i18n/admin';
 import type { ActionState } from '@/types/domain';
+import { administratorValidationError,createAdministratorSchema,updateAdministratorSchema } from './administrator-validation';
 
 const optionalId=z.union([z.uuid(),z.literal('')]).optional();
 export async function saveLocation(_:ActionState,form:FormData):Promise<ActionState> {
@@ -18,11 +19,11 @@ export async function saveLocation(_:ActionState,form:FormData):Promise<ActionSt
 }
 export async function createAdministrator(_:ActionState,form:FormData):Promise<ActionState> {
  const {profile}=await requireAdmin(true);
- const parsed=z.object({name:z.string().trim().min(2).max(120),email:z.email().max(254),password:z.string().min(8).max(128),mtaa_id:z.uuid(),role:z.enum(['mtaa_admin','agent'])}).safeParse(Object.fromEntries(form));
- if(!parsed.success) return {error:t.invalid};
+ const parsed=createAdministratorSchema.safeParse(Object.fromEntries(form));
+ if(!parsed.success) return {error:administratorValidationError(parsed.error)};
  const p=parsed.data, db=createAdminClient();
  const {data:tenant}=await db.from('mitaa').select('id').eq('id',p.mtaa_id).eq('status','active').single();
- if(!tenant) return {error:t.invalid};
+ if(!tenant) return {error:t.invalidAdministratorMtaa};
  const {data,error}=await db.auth.admin.createUser({email:p.email,password:p.password,email_confirm:true});
  if(error || !data.user) return {error:t.failedSave};
  const {error:profileError}=await db.rpc('manage_profile',{p_actor:profile.id,p_id:data.user.id,p_name:p.name,p_mtaa:p.mtaa_id,p_role:p.role});
@@ -37,8 +38,8 @@ export async function createAdministrator(_:ActionState,form:FormData):Promise<A
 }
 export async function updateAdministrator(_:ActionState,form:FormData):Promise<ActionState> {
  const {profile}=await requireAdmin(true);
- const parsed=z.object({id:z.uuid(),name:z.string().trim().min(2).max(120),email:z.email().max(254),mtaa_id:z.uuid(),status:z.enum(['active','suspended']),role:z.enum(['mtaa_admin','agent'])}).safeParse(Object.fromEntries(form));
- if(!parsed.success) return {error:t.invalid};
+ const parsed=updateAdministratorSchema.safeParse(Object.fromEntries(form));
+ if(!parsed.success) return {error:administratorValidationError(parsed.error)};
  const p=parsed.data;
  const db=createAdminClient();
  const {error:authError}=await db.auth.admin.updateUserById(p.id,{email:p.email,email_confirm:true});

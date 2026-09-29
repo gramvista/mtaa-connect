@@ -61,8 +61,8 @@ export async function resetPassword(_:ActionState,form:FormData):Promise<ActionS
 }
 export async function changePassword(_:ActionState,form:FormData):Promise<ActionState> {
  const {userClient}=await requireStaff();
- const parsed=z.string().min(8).max(128).safeParse(form.get('password'));
- if(!parsed.success) return {error:t.invalid};
- const {error}=await userClient.auth.updateUser({password:parsed.data});
+ const parsed=z.object({password:z.string().min(8).max(128),confirmation:z.string().min(8).max(128)}).safeParse(Object.fromEntries(form));
+ if(!parsed.success||parsed.data.password!==parsed.data.confirmation) return {error:t.passwordMismatch};
+ const {error}=await userClient.auth.updateUser({password:parsed.data.password});
  return error?{error:t.failedSave}:{success:t.saved};
 }
