@@ -12,7 +12,7 @@ export default async function Dashboard(){
   db.from('resident_directory').select('id',{count:'exact',head:true}).eq('subscription_status','active'),
   db.from('residents').select('id',{count:'exact',head:true}).eq('registration_status','pending'),
   db.from('mitaa').select('id',{count:'exact',head:true}),
-  db.from('sms_campaigns').select('*').order('created_at',{ascending:false}).limit(5),
+  db.from('sms_campaigns').select('id,mtaa_id,title,message,status,total_recipients,units_per_message,sent_count,delivered_count,failed_count,created_at').order('created_at',{ascending:false}).limit(5),
  ]);
  if(results.some(r=>r.error)) throw new Error(t.unavailable);
  const campaigns=results[4].data as Campaign[];

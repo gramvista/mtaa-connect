@@ -25,13 +25,12 @@ export async function confirmCampaign(_:ActionState,form:FormData):Promise<Actio
  const {profile}=await requireAdmin();const parsed=z.uuid().safeParse(form.get('id'));if(!parsed.success)return {error:t.invalid};
  const {error}=await createAdminClient().rpc('confirm_campaign',{p_actor:profile.id,p_id:parsed.data});
  if(error)return {error:error.message.includes('Mtaa campaign limit reached')?t.campaignLimitReached:t.failedSave};
- try{await processSmsQueue(25);}catch{return {error:t.smsQueuedRetry};}
  revalidatePath('/admin/campaigns/'+parsed.data);return {success:t.smsSubmitted};
 }
 export async function processQueuedMessages():Promise<ActionState>{
  await requireAdmin();
  try{
-  const processed=await processSmsQueue(25);
+  const processed=await processSmsQueue();
   revalidatePath('/admin');revalidatePath('/admin/campaigns');
   return {success:processed?`${t.smsProcessed} ${processed}`:t.smsQueueEmpty};
  }catch{return {error:t.smsQueueFailed};}

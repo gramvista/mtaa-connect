@@ -1,4 +1,5 @@
 import vinextWorker from "vinext/server/fetch-handler";
+import { dispatchScheduledWorker } from "./src/services/scheduled-worker";
 
 type WorkerEnvironment = {
   WORKER_SECRET?: string;
@@ -23,14 +24,7 @@ const cloudflareWorker = {
     }
 
     context.waitUntil(
-      fetch("https://mtaa.gramvistaempiregroup.com/api/internal/worker", {
-        method: "POST",
-        headers: { authorization: `Bearer ${env.WORKER_SECRET}` },
-      }).then((response) => {
-        if (!response.ok) {
-          throw new Error(`Scheduled worker returned HTTP ${response.status}`);
-        }
-      }),
+      dispatchScheduledWorker(env.WORKER_SECRET,(request)=>worker.fetch(request,env,context)),
     );
   },
 };

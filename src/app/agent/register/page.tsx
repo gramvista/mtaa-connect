@@ -9,11 +9,11 @@ export default async function AgentRegister({searchParams}:{searchParams:Promise
  const [areasResult,categoriesResult,fieldsResult]=await Promise.all([
   db.from('balozi_areas').select('id,name').eq('mtaa_id',mtaaId).eq('status','active').order('name').limit(500),
   db.from('categories').select('id,name,mtaa_id').or(`mtaa_id.is.null,mtaa_id.eq.${mtaaId}`).eq('status','active').order('name').limit(500),
-  db.from('grouping_fields').select('*').or(`mtaa_id.is.null,mtaa_id.eq.${mtaaId}`).eq('status','active').order('name').limit(100),
+  db.from('grouping_fields').select('id,mtaa_id,name,status').or(`mtaa_id.is.null,mtaa_id.eq.${mtaaId}`).eq('status','active').order('name').limit(100),
  ]);
  if(areasResult.error||categoriesResult.error||fieldsResult.error)throw new Error(t.unavailable);
  const fields=(fieldsResult.data||[]) as GroupingField[];
- const valuesResult=fields.length?await db.from('grouping_values').select('*').in('field_id',fields.map(field=>field.id)).eq('status','active').order('name').limit(1000):{data:[],error:null};
+ const valuesResult=fields.length?await db.from('grouping_values').select('id,field_id,name,status').in('field_id',fields.map(field=>field.id)).eq('status','active').order('name').limit(1000):{data:[],error:null};
  if(valuesResult.error)throw new Error(t.unavailable);
  return <><h1 className="text-2xl font-bold">{t.agentRegister}</h1><p className="text-sm text-muted-foreground">{t.agentRegistrationHelp}</p>{assignments.length>1&&<form className="max-w-md"><label className="text-sm">{t.mtaa}<select className="mt-1 block min-h-11 w-full rounded-lg border bg-background px-3" name="mtaa" defaultValue={mtaaId}>{assignments.map(a=><option key={a.mtaa_id} value={a.mtaa_id}>{assignmentName(a.mitaa)}</option>)}</select></label><button className="mt-2 min-h-11 rounded-lg bg-primary px-4 text-primary-foreground">{t.select}</button></form>}<div className="max-w-3xl"><AgentRegistrationForm mtaaId={mtaaId} mtaaName={mtaaName} keyValue={randomUUID()} balozi={(areasResult.data||[]) as Location[]} categories={(categoriesResult.data||[]) as Location[]} fields={fields} values={(valuesResult.data||[]) as GroupingValue[]}/></div></>;
 }

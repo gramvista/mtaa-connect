@@ -30,17 +30,13 @@ export function ResidentForm({initialPath,resident,superAdmin=false}:{initialPat
   if(!path.mtaa)return;
   const controller=new AbortController();
   (async()=>{
-   const response=await fetch('/api/locations?'+new URLSearchParams({kind:'grouping_fields',parent:path.mtaa}),{signal:controller.signal});
+   const response=await fetch('/api/locations?'+new URLSearchParams({kind:'grouping_bundle',parent:path.mtaa}),{signal:controller.signal});
    if(!response.ok)throw new Error();
-   const fields=(await response.json()).rows as GroupingField[];
-   const lists=await Promise.all(fields.map(async field=>{
-    const res=await fetch('/api/locations?'+new URLSearchParams({kind:'grouping_values',parent:field.id}),{signal:controller.signal});
-    return res.ok?((await res.json()).rows as GroupingValue[]):[];
-   }));
+   const data=await response.json() as {fields:GroupingField[];values:GroupingValue[]};
    if(controller.signal.aborted)return;
    const map:Record<string,GroupingValue[]>={},chosen:Record<string,string>={};
-   fields.forEach((field,index)=>{map[field.id]=lists[index];const match=lists[index].find(value=>(groupIds||[]).includes(value.id));if(match)chosen[field.id]=match.id;});
-   setGroupFields(fields);setGroupValues(map);setSelected(chosen);
+   data.fields.forEach(field=>{const values=data.values.filter(value=>value.field_id===field.id);map[field.id]=values;const match=values.find(value=>(groupIds||[]).includes(value.id));if(match)chosen[field.id]=match.id;});
+   setGroupFields(data.fields);setGroupValues(map);setSelected(chosen);
    form.setValue('group_values',Object.values(chosen).filter(Boolean));
   })().catch(()=>{if(!controller.signal.aborted)setError(t.unavailable);});
   return ()=>controller.abort();

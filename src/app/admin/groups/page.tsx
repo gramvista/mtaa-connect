@@ -9,11 +9,11 @@ export const dynamic='force-dynamic';
 export default async function Groups({searchParams}:{searchParams:Promise<Record<string,string|undefined>>}){
  const {db,profile}=await requireAdmin();const params=await searchParams;
  const isSuper=profile.role==='super_admin';
- const {data:fieldData,error:fieldError}=await db.from('grouping_fields').select('*').order('name').limit(500);
+ const {data:fieldData,error:fieldError}=await db.from('grouping_fields').select('id,mtaa_id,name,status').order('name').limit(500);
  if(fieldError)throw new Error(t.unavailable);
  const fields=(fieldData||[]) as GroupingField[];
  const selected=fields.find(field=>field.id===params.field)||null;
- const values=selected?(await db.from('grouping_values').select('*').eq('field_id',selected.id).order('name').limit(500)).data as GroupingValue[]||[]:[];
+ const values=selected?(await db.from('grouping_values').select('id,field_id,name,status').eq('field_id',selected.id).order('name').limit(500)).data as GroupingValue[]||[]:[];
  const canManage=(field:GroupingField)=>isSuper?field.mtaa_id===null:field.mtaa_id===profile.mtaa_id;
  return <><div><h1 className="text-2xl font-bold">{t.groupings}</h1><p className="mt-1 text-sm text-muted-foreground">{t.groupingFieldHelp}</p></div>
  <div className="grid gap-6 lg:grid-cols-2">

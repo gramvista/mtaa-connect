@@ -9,7 +9,7 @@ import { adminText as t } from '@/i18n/admin';
 import type { Campaign } from '@/types/domain';
 export default async function CampaignDetail({params,searchParams}:{params:Promise<{id:string}>;searchParams:Promise<{page?:string}>}){
  const {db}=await requireAdmin();const {id}=await params;if(!z.uuid().safeParse(id).success)notFound();const page=getPage((await searchParams).page);
- const {data}=await db.from('sms_campaigns').select('*').eq('id',id).single();if(!data)notFound();const c=data as Campaign;
+ const {data}=await db.from('sms_campaigns').select('id,mtaa_id,title,message,status,total_recipients,units_per_message,sent_count,delivered_count,failed_count,created_at').eq('id',id).single();if(!data)notFound();const c=data as Campaign;
  const {data:recipientData,error,count}=await db.from('sms_recipients').select('id,phone_number_snapshot,status,sent_at,delivered_at,residents(full_name)',{count:'exact'}).eq('campaign_id',id).order('id').range((page-1)*25,page*25-1);
  if(error)throw new Error(t.unavailable);
  const recipients=recipientData as unknown as {id:string;phone_number_snapshot:string;status:string;sent_at:string|null;delivered_at:string|null;residents:{full_name:string}|null}[];

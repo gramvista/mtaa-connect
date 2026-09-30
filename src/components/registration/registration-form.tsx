@@ -32,17 +32,12 @@ export function RegistrationForm({regions}:{regions:Location[]}){
   if(!path.mtaa)return;
   const controller=new AbortController();
   (async()=>{
-   const response=await fetch('/api/public/locations?'+new URLSearchParams({kind:'grouping_fields',parent:path.mtaa}),{signal:controller.signal});
+   const response=await fetch('/api/public/locations?'+new URLSearchParams({kind:'grouping_bundle',parent:path.mtaa}),{signal:controller.signal});
    if(!response.ok)throw new Error();
-   const fields=(await response.json()).rows as GroupingField[];
-   const lists=await Promise.all(fields.map(async field=>{
-    const values=await fetch('/api/public/locations?'+new URLSearchParams({kind:'grouping_values',parent:field.id,scope:path.mtaa}),{signal:controller.signal});
-    if(!values.ok)throw new Error();
-    return (await values.json()).rows as GroupingValue[];
-   }));
+   const data=await response.json() as {fields:GroupingField[];values:GroupingValue[]};
    if(controller.signal.aborted)return;
-   const map:Record<string,GroupingValue[]>={};fields.forEach((field,index)=>{map[field.id]=lists[index];});
-   setGroupFields(fields);setGroupValues(map);
+   const map:Record<string,GroupingValue[]>={};data.fields.forEach(field=>{map[field.id]=data.values.filter(value=>value.field_id===field.id);});
+   setGroupFields(data.fields);setGroupValues(map);
   })().catch(()=>{if(!controller.signal.aborted)setCategoryError(true);});
   return()=>controller.abort();
  },[path.mtaa,retry]);

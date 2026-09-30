@@ -6,13 +6,14 @@ import { verifyMockSignature } from '../webhook-signature';
 import { gramvistaProvider } from './gramvista';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { decryptSmsSecret } from './credentials';
+import { mapSmsBatch } from './batch';
 
 export function smsProvider():SMSProvider {
  if(process.env.SMS_PROVIDER==='gramvista')return gramvistaProvider();
  if(process.env.SMS_PROVIDER!=='mock'||!mockEnabled())throw new Error('SMS provider is not configured');
  const send=async (input:SMSRequest)=>({providerMessageId:'mock-'+input.idempotencyKey,status:'sent' as const});
  return {
-  name:'mock',sendSingleSMS:send,async sendBulkSMS(inputs){return Promise.all(inputs.map(send));},
+  name:'mock',sendSingleSMS:send,async sendBulkSMS(inputs){return mapSmsBatch(inputs,send);},
   async getDeliveryStatus(){return 'unknown';},
   async processDeliveryWebhook(body,headers){
    const secret=process.env.SMS_WEBHOOK_SECRET;

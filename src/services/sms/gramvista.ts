@@ -3,6 +3,7 @@ import { createHmac,timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
 import { parseGramvistaConfig } from './gramvista-config';
 import { SMSProviderError,type SMSProvider,type SMSRequest } from './types';
+import { mapSmsBatch } from './batch';
 
 type Fetcher=typeof fetch;
 const sendSchema=z.object({success:z.literal(true),message_batch_id:z.string().min(1),campaign_id:z.uuid(),status:z.literal('queued')}).passthrough();
@@ -75,7 +76,7 @@ export function gramvistaProvider(options:{env?:Record<string,unknown>;fetcher?:
   return {providerMessageId:messages.data[0].message_reference,status:'sent' as const};
  };
  return {
-  name:'gramvista',sendSingleSMS:send,async sendBulkSMS(inputs){return Promise.all(inputs.map(send));},
+  name:'gramvista',sendSingleSMS:send,async sendBulkSMS(inputs){return mapSmsBatch(inputs,send);},
   async getDeliveryStatus(id){
    const response=await request(`/messages/${encodeURIComponent(id)}`);
    if(!response.ok)return 'unknown';
