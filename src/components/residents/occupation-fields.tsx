@@ -1,6 +1,6 @@
 'use client';
 import { inputClass } from '@/components/ui/form';
-import { otherOccupationCode } from '@/features/residents/schema';
+import { otherOccupationCode } from '@/features/residents/occupations';
 import { adminText as t } from '@/i18n/admin';
 import type { Occupation } from '@/types/domain';
 

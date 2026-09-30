@@ -1,4 +1,5 @@
-import { normalizePhone,occupationFields,otherOccupationCode } from '../residents/schema';
+import { normalizePhone,occupationFields } from '../residents/schema';
+import { otherOccupationCode } from '../residents/occupations';
 import { z } from 'zod';
 
 export const agentRegistrationSchema=z.object({

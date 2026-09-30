@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { otherOccupationCode } from './occupations';
 
 export function normalizePhone(value: string) {
  const clean = value.replace(/[\s()-]/g,'');
@@ -7,7 +8,6 @@ export function normalizePhone(value: string) {
  return clean;
 }
 export const phoneSchema = z.string().transform(normalizePhone).pipe(z.string().regex(/^\+255[67]\d{8}$/));
-export const otherOccupationCode='nyingine';
 export const occupationFields={
  occupation_codes:z.array(z.string().regex(/^[a-z0-9_]{2,40}$/)).min(1).max(3).refine(codes=>new Set(codes).size===codes.length),
  occupation_other:z.string().trim().max(120).default(''),
