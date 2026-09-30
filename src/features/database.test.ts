@@ -111,7 +111,7 @@ describe('PostgreSQL migrations and security', () => {
     }finally{await db.exec('rollback');}
   });
   it('keeps agent mutation and commission summary RPCs unavailable to browser roles',async()=>{
-    for(const signature of ['public.register_agent_resident(uuid,uuid,uuid,text,text,uuid[],boolean,text,uuid,uuid[])','public.agent_commission_summary(uuid,uuid)']){
+    for(const signature of ['public.register_agent_resident(uuid,uuid,uuid,text,text,uuid[],boolean,text,uuid,uuid[],text[],text)','public.agent_commission_summary(uuid,uuid)']){
       expect(await scalar('select has_function_privilege($1,$2,\'execute\')::text',['authenticated',signature])).toBe('false');
     }
   });
@@ -161,6 +161,25 @@ describe('PostgreSQL migrations and security', () => {
       expect(await scalar('select count(*)::text from public.subscriptions where resident_id=$1',[rid])).toBe('1');
     }finally{await db.exec('rollback');}
   });
+  it('stores controlled occupations and requires details for another occupation',async()=>{
+    await db.exec('begin');
+    try{
+      const args=['3'.repeat(64),'4'.repeat(64),mtaa,balozi,'Occupied Resident','+255712345699',[categories[0]],true,'pending',[],['mfanyabiashara','nyingine'],'Fundi viatu'];
+      const call='select public.register_public_resident($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)';
+      const payment=await scalar(call,args);
+      const rid=await scalar('select resident_id from public.payments where id=$1',[payment]);
+      expect(await scalar('select occupation_names from public.resident_directory where id=$1',[rid])).toBe('Mfanyabiashara, Kazi nyingine: Fundi viatu');
+      expect(await scalar('select occupation_other from public.resident_directory where id=$1',[rid])).toBe('Fundi viatu');
+      await db.exec('savepoint missing_detail');
+      const missing=[...args];missing[0]='5'.repeat(64);missing[1]='6'.repeat(64);missing[5]='+255712345696';missing[11]='';
+      await expect(db.query(call,missing)).rejects.toThrow('Describe the other occupation');
+      await db.exec('rollback to savepoint missing_detail');
+      await db.exec('savepoint invalid_occupation');
+      const invalid=[...args];invalid[0]='0'.repeat(64);invalid[1]='1'.repeat(64);invalid[5]='+255712345695';invalid[10]=['haipo'];invalid[11]='';
+      await expect(db.query(call,invalid)).rejects.toThrow('Invalid occupation');
+      await db.exec('rollback to savepoint invalid_occupation');
+    }finally{await db.exec('rollback');}
+  });
   it('rejects public registration with mismatched Balozi, missing consent or excess categories atomically',async()=>{
     const args=['e'.repeat(64),'f'.repeat(64),mtaa,balozi,'Invalid Applicant','+255712345686',[categories[0]],true,'pending'];
     const call='select public.register_public_resident($1,$2,$3,$4,$5,$6,$7,$8,$9)';
@@ -174,7 +193,7 @@ describe('PostgreSQL migrations and security', () => {
   });
   it('denies browser roles public registration RPCs and private receipt data',async()=>{
     for(const role of ['anon','authenticated']){
-      expect(await scalar("select has_function_privilege($1,'public.register_public_resident(text,text,uuid,uuid,text,text,uuid[],boolean,text,uuid[])','execute')::text",[role])).toBe('false');
+      expect(await scalar("select has_function_privilege($1,'public.register_public_resident(text,text,uuid,uuid,text,text,uuid[],boolean,text,uuid[],text[],text)','execute')::text",[role])).toBe('false');
       expect(await scalar("select has_function_privilege($1,'public.public_registration_receipt(text)','execute')::text",[role])).toBe('false');
       expect(await scalar("select has_table_privilege($1,'private.registration_sessions','select')::text",[role])).toBe('false');
     }

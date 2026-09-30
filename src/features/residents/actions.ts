@@ -18,6 +18,7 @@ export async function saveResident(input:unknown):Promise<ActionState> {
   const {data,error}=await createAdminClient().rpc('save_resident',{
    p_actor:profile.id,p_mtaa:r.mtaa_id,p_balozi:r.balozi_area_id||null,p_name:r.full_name,p_phone:r.phone_number,
    p_categories:r.category_ids,p_approved:r.approved,p_consent:r.consent,p_id:r.id||null,p_groups:r.group_values,
+   p_occupations:r.occupation_codes,p_occupation_other:r.occupation_other||null,
   });
   if(error) return {error:error.code==='23505'?t.duplicate:t.failedSave};
   revalidatePath('/admin'); revalidatePath('/admin/residents');

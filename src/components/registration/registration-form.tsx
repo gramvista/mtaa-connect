@@ -1,6 +1,6 @@
 'use client';
 import { useEffect,useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm,useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -9,16 +9,18 @@ import { registerResident,startNewPublicRegistration } from '@/features/registra
 import { LocationPicker,emptyPath,type LocationPath } from '@/components/admin/location-picker';
 import { inputClass } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
+import { OccupationFields } from '@/components/residents/occupation-fields';
 import { registrationText as t } from '@/i18n/registration';
 import { adminText as a } from '@/i18n/admin';
-import type { GroupingField,GroupingValue,Location } from '@/types/domain';
+import type { GroupingField,GroupingValue,Location,Occupation } from '@/types/domain';
 
-export function RegistrationForm({regions}:{regions:Location[]}){
+export function RegistrationForm({regions,occupations}:{regions:Location[];occupations:Occupation[]}){
  const router=useRouter();
  const [path,setPath]=useState(emptyPath),[categories,setCategories]=useState<Location[]>([]);
  const [groupFields,setGroupFields]=useState<GroupingField[]>([]),[groupValues,setGroupValues]=useState<Record<string,GroupingValue[]>>({}),[selectedGroups,setSelectedGroups]=useState<Record<string,string>>({});
  const [error,setError]=useState(''),[categoryError,setCategoryError]=useState(false),[retry,setRetry]=useState(0);
- const form=useForm<RegistrationInput>({resolver:zodResolver(registrationSchema),defaultValues:{mtaa_id:'',balozi_area_id:'',full_name:'',phone_number:'',category_ids:[],group_values:[],consent:false,website:''}});
+ const form=useForm<RegistrationInput>({resolver:zodResolver(registrationSchema),defaultValues:{mtaa_id:'',balozi_area_id:'',full_name:'',phone_number:'',category_ids:[],group_values:[],occupation_codes:[],occupation_other:'',consent:false,website:''}});
+ const occupationCodes=useWatch({control:form.control,name:'occupation_codes'})||[],occupationOther=useWatch({control:form.control,name:'occupation_other'})||'';
  useEffect(()=>{
   if(!path.mtaa)return;
   const controller=new AbortController();
@@ -57,6 +59,7 @@ export function RegistrationForm({regions}:{regions:Location[]}){
     <label className="block text-sm">{a.name}<input className={inputClass} autoComplete="name" maxLength={120} {...form.register('full_name')}/></label>
     <label className="block text-sm">{a.phone}<input className={inputClass} type="tel" inputMode="tel" autoComplete="tel" placeholder="0712 345 678" {...form.register('phone_number')}/></label>
     <fieldset><legend className="text-sm font-medium">{a.categories}</legend><p className="text-sm text-muted-foreground">{t.categoryHelp}</p><div className="mt-3 flex flex-wrap gap-3">{categories.map(c=><label key={c.id} className="flex min-h-11 items-center gap-2 rounded-lg border px-3"><input type="checkbox" value={c.id} {...form.register('category_ids')}/>{c.name}</label>)}</div></fieldset>
+    <OccupationFields occupations={occupations} selected={occupationCodes} other={occupationOther} onChange={codes=>form.setValue('occupation_codes',codes,{shouldDirty:true,shouldValidate:true})} onOtherChange={value=>form.setValue('occupation_other',value,{shouldDirty:true,shouldValidate:true})}/>
     {groupFields.length>0&&<fieldset><legend className="text-sm font-medium">{a.residentGroups}</legend><p className="text-sm text-muted-foreground">{a.groupsHelp}</p><div className="mt-3 grid gap-4 sm:grid-cols-2">{groupFields.map(field=><label key={field.id} className="block text-sm">{field.name}<select className={inputClass} value={selectedGroups[field.id]||''} onChange={e=>{const next={...selectedGroups,[field.id]:e.target.value};setSelectedGroups(next);form.setValue('group_values',Object.values(next).filter(Boolean));}}><option value="">{a.select}</option>{(groupValues[field.id]||[]).map(value=><option key={value.id} value={value.id}>{value.name}</option>)}</select></label>)}</div></fieldset>}
     {categoryError&&<p role="alert" className="text-sm text-destructive">{t.unavailable} <Button type="button" variant="outline" size="sm" onClick={()=>setRetry(n=>n+1)}>{a.search}</Button></p>}
    </section>

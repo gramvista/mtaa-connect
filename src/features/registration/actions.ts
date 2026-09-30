@@ -21,10 +21,11 @@ export async function registerResident(input:unknown):Promise<ActionState>{
   let token=await registrationToken(true);
   if(!token)throw new Error('Missing session');
   const provider=paymentProvider();
-  const request=hash(JSON.stringify({...r,category_ids:[...r.category_ids].sort(),group_values:[...r.group_values].sort()}));
+  const request=hash(JSON.stringify({...r,category_ids:[...r.category_ids].sort(),group_values:[...r.group_values].sort(),occupation_codes:[...r.occupation_codes].sort()}));
   const save=(sessionToken:string)=>createAdminClient().rpc('register_public_resident',{
    p_token:sessionToken,p_request:request,p_mtaa:r.mtaa_id,p_balozi:r.balozi_area_id||null,p_name:r.full_name,
    p_phone:r.phone_number,p_categories:r.category_ids,p_consent:r.consent,p_provider:provider.name,p_groups:r.group_values,
+   p_occupations:r.occupation_codes,p_occupation_other:r.occupation_other||null,
   });
   let {error}=await save(token);
   // A browser may register another resident. Preserve idempotency for an

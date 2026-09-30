@@ -8,7 +8,7 @@ import { verifyMockSignature } from '../services/webhook-signature';
 describe('registration and provider boundaries',()=>{
  it('keeps agent commission and approval fields out of agent registration input',()=>{
   const id='10000000-0000-4000-8000-000000000001';
-  const input={mtaa_id:id,balozi_area_id:'',full_name:'Agent Resident',phone_number:'0712345678',payment_phone:'0689123456',category_ids:[id],group_values:[],consent:true,key:id};
+  const input={mtaa_id:id,balozi_area_id:'',full_name:'Agent Resident',phone_number:'0712345678',payment_phone:'0689123456',category_ids:[id],group_values:[],occupation_codes:['fundi_gereji'],occupation_other:'',consent:true,key:id};
   expect(agentRegistrationSchema.parse(input).phone_number).toBe('+255712345678');
   expect(agentRegistrationSchema.parse(input).payment_phone).toBe('+255689123456');
   expect(agentRegistrationSchema.safeParse({...input,approved:true}).success).toBe(false);
@@ -16,7 +16,7 @@ describe('registration and provider boundaries',()=>{
  });
  it('rejects public approval, identity, payment and honeypot fields',()=>{
   const id='10000000-0000-4000-8000-000000000001';
-  const input={mtaa_id:id,balozi_area_id:id,full_name:'Asha Juma',phone_number:'0712345678',category_ids:[id],consent:true};
+  const input={mtaa_id:id,balozi_area_id:id,full_name:'Asha Juma',phone_number:'0712345678',category_ids:[id],occupation_codes:['mfanyabiashara'],occupation_other:'',consent:true};
   expect(registrationSchema.parse(input).phone_number).toBe('+255712345678');
   for(const forged of [{approved:true},{id},{amount:1},{payment_status:'successful'},{website:'spam'}]){
    expect(registrationSchema.safeParse({...input,...forged}).success).toBe(false);
@@ -29,10 +29,18 @@ describe('registration and provider boundaries',()=>{
  });
  it('requires consent and rejects too many categories',()=>{
   const id='10000000-0000-4000-8000-000000000001';
-  const data={mtaa_id:id,balozi_area_id:id,full_name:'Asha Juma',phone_number:'0712345678',category_ids:[id],consent:true,approved:false};
+  const data={mtaa_id:id,balozi_area_id:id,full_name:'Asha Juma',phone_number:'0712345678',category_ids:[id],occupation_codes:['mfanyabiashara'],occupation_other:'',consent:true,approved:false};
   expect(residentSchema.safeParse(data).success).toBe(true);
   expect(residentSchema.safeParse({...data,consent:false}).success).toBe(false);
   expect(residentSchema.safeParse({...data,category_ids:[id,id,id]}).success).toBe(false);
+ });
+ it('requires occupation details only for the other choice',()=>{
+  const id='10000000-0000-4000-8000-000000000001';
+  const data={mtaa_id:id,balozi_area_id:'',full_name:'Asha Juma',phone_number:'0712345678',category_ids:[id],occupation_codes:['nyingine'],occupation_other:'',consent:true,approved:false};
+  expect(residentSchema.safeParse(data).success).toBe(false);
+  expect(residentSchema.safeParse({...data,occupation_other:'Fundi viatu'}).success).toBe(true);
+  expect(residentSchema.safeParse({...data,occupation_codes:['mfanyabiashara'],occupation_other:'Fundi viatu'}).success).toBe(false);
+  expect(residentSchema.safeParse({...data,occupation_codes:[]}).success).toBe(false);
  });
  it('counts GSM extension characters and Unicode SMS segments',()=>{
   expect(smsUnits('a'.repeat(160))).toBe(1);expect(smsUnits('a'.repeat(161))).toBe(2);

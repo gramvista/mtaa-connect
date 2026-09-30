@@ -1,23 +1,25 @@
 'use client';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm,useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { agentRegistrationSchema,type AgentRegistrationInput } from '@/features/agents/schema';
 import { registerByAgent } from '@/features/agents/actions';
 import { inputClass } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
+import { OccupationFields } from '@/components/residents/occupation-fields';
 import { adminText as t } from '@/i18n/admin';
-import type { GroupingField,GroupingValue,Location } from '@/types/domain';
+import type { GroupingField,GroupingValue,Location,Occupation } from '@/types/domain';
 import { baloziOptionLabel } from '@/features/locations/display';
 
-export function AgentRegistrationForm({mtaaId,mtaaName,keyValue,balozi,categories,fields,values}:{
+export function AgentRegistrationForm({mtaaId,mtaaName,keyValue,balozi,categories,occupations,fields,values}:{
  mtaaId:string;mtaaName:string;keyValue:string;balozi:Location[];categories:Location[];
- fields:GroupingField[];values:GroupingValue[];
+ occupations:Occupation[];fields:GroupingField[];values:GroupingValue[];
 }){
  const router=useRouter();
  const [error,setError]=useState(''),[chosen,setChosen]=useState<Record<string,string>>({});
- const form=useForm<AgentRegistrationInput>({resolver:zodResolver(agentRegistrationSchema),defaultValues:{mtaa_id:mtaaId,balozi_area_id:'',full_name:'',phone_number:'',payment_phone:'',category_ids:[],group_values:[],consent:false,key:keyValue}});
+ const form=useForm<AgentRegistrationInput>({resolver:zodResolver(agentRegistrationSchema),defaultValues:{mtaa_id:mtaaId,balozi_area_id:'',full_name:'',phone_number:'',payment_phone:'',category_ids:[],group_values:[],occupation_codes:[],occupation_other:'',consent:false,key:keyValue}});
+ const occupationCodes=useWatch({control:form.control,name:'occupation_codes'})||[],occupationOther=useWatch({control:form.control,name:'occupation_other'})||'';
  const submit=form.handleSubmit(async input=>{
   setError('');
   try{
@@ -34,6 +36,7 @@ export function AgentRegistrationForm({mtaaId,mtaaName,keyValue,balozi,categorie
    <div className="grid gap-4 sm:grid-cols-2"><label className="text-sm">{t.name}<input className={inputClass} autoComplete="name" maxLength={120} {...form.register('full_name')}/></label><label className="text-sm">{t.phone}<input className={inputClass} type="tel" inputMode="tel" autoComplete="tel" placeholder="0712 345 678" {...form.register('phone_number')}/></label></div>
    <label className="block text-sm">{t.payerPhone}<input className={inputClass} type="tel" inputMode="tel" autoComplete="tel" placeholder="0689 123 456" {...form.register('payment_phone')}/><span className="mt-1 block text-xs text-muted-foreground">{t.payerPhoneHelp}</span></label>
    <fieldset><legend className="font-medium">{t.categories}</legend><p className="text-sm text-muted-foreground">{t.categoryHelp}</p><div className="mt-3 flex flex-wrap gap-3">{categories.map(category=><label key={category.id} className="flex min-h-11 items-center gap-2 rounded-lg border px-3"><input type="checkbox" value={category.id} {...form.register('category_ids')}/>{category.name}</label>)}</div></fieldset>
+   <OccupationFields occupations={occupations} selected={occupationCodes} other={occupationOther} onChange={codes=>form.setValue('occupation_codes',codes,{shouldDirty:true,shouldValidate:true})} onOtherChange={value=>form.setValue('occupation_other',value,{shouldDirty:true,shouldValidate:true})}/>
    {fields.length>0&&<fieldset><legend className="font-medium">{t.residentGroups}</legend><div className="mt-3 grid gap-4 sm:grid-cols-2">{fields.map(field=><label key={field.id} className="text-sm">{field.name}<select className={inputClass} value={chosen[field.id]||''} onChange={event=>{const next={...chosen,[field.id]:event.target.value};setChosen(next);form.setValue('group_values',Object.values(next).filter(Boolean));}}><option value="">{t.select}</option>{values.filter(value=>value.field_id===field.id).map(value=><option key={value.id} value={value.id}>{value.name}</option>)}</select></label>)}</div></fieldset>}
    <p className="rounded-lg bg-muted p-4 text-sm">{t.agentRegistrationHelp}</p>
    <label className="flex items-start gap-3 text-sm"><input className="mt-1" type="checkbox" {...form.register('consent')}/>{t.consent}</label>
