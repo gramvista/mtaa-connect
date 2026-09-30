@@ -16,7 +16,7 @@ export function LocationManagement({superAdmin,initialPath,initialKind}:{superAd
   <form className="flex gap-3"><input type="hidden" name="kind" value={kind}/><input type="hidden" name="parent" value={parent}/>{Object.entries(path).map(([key,value])=><input key={key} type="hidden" name={key} value={value}/>)}<Button size="sm" variant="outline">{t.search}</Button></form>
   <ActionForm action={saveLocation} key={kind+parent}>
    <input type="hidden" name="kind" value={kind}/><input type="hidden" name="parent" value={parent}/>
-   <label className="block text-sm">{t.locationName}<input className={inputClass} name="name" minLength={2} maxLength={80} required/></label>
+   <label className="block text-sm">{kind==='balozi_areas'?t.baloziAreaName:t.locationName}<input className={inputClass} name="name" minLength={2} maxLength={80} required/></label>
    {kind==='balozi_areas'&&<label className="block text-sm">{t.baloziName}<input className={inputClass} name="balozi_name" maxLength={120}/></label>}
   </ActionForm>
  </section>;

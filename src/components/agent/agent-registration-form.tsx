@@ -9,6 +9,7 @@ import { inputClass } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { adminText as t } from '@/i18n/admin';
 import type { GroupingField,GroupingValue,Location } from '@/types/domain';
+import { baloziOptionLabel } from '@/features/locations/display';
 
 export function AgentRegistrationForm({mtaaId,mtaaName,keyValue,balozi,categories,fields,values}:{
  mtaaId:string;mtaaName:string;keyValue:string;balozi:Location[];categories:Location[];
@@ -29,7 +30,7 @@ export function AgentRegistrationForm({mtaaId,mtaaName,keyValue,balozi,categorie
  return <form onSubmit={submit} noValidate className="space-y-6">
   <fieldset disabled={form.formState.isSubmitting} className="space-y-5">
    <div className="rounded-lg bg-muted p-4"><p className="text-sm text-muted-foreground">{t.mtaa}</p><p className="font-semibold">{mtaaName}</p></div>
-   <label className="block text-sm">{t.balozi} ({t.optional})<select className={inputClass} {...form.register('balozi_area_id')}><option value="">{t.select}</option>{balozi.map(area=><option key={area.id} value={area.id}>{area.name}</option>)}</select></label>
+   <label className="block text-sm">{t.baloziAreaName} ({t.optional})<select className={inputClass} {...form.register('balozi_area_id')}><option value="">{t.select}</option>{balozi.map(area=><option key={area.id} value={area.id}>{baloziOptionLabel(area)}</option>)}</select></label>
    <div className="grid gap-4 sm:grid-cols-2"><label className="text-sm">{t.name}<input className={inputClass} autoComplete="name" maxLength={120} {...form.register('full_name')}/></label><label className="text-sm">{t.phone}<input className={inputClass} type="tel" inputMode="tel" autoComplete="tel" placeholder="0712 345 678" {...form.register('phone_number')}/></label></div>
    <label className="block text-sm">{t.payerPhone}<input className={inputClass} type="tel" inputMode="tel" autoComplete="tel" placeholder="0689 123 456" {...form.register('payment_phone')}/><span className="mt-1 block text-xs text-muted-foreground">{t.payerPhoneHelp}</span></label>
    <fieldset><legend className="font-medium">{t.categories}</legend><p className="text-sm text-muted-foreground">{t.categoryHelp}</p><div className="mt-3 flex flex-wrap gap-3">{categories.map(category=><label key={category.id} className="flex min-h-11 items-center gap-2 rounded-lg border px-3"><input type="checkbox" value={category.id} {...form.register('category_ids')}/>{category.name}</label>)}</div></fieldset>

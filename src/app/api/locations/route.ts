@@ -18,7 +18,7 @@ export async function GET(request:NextRequest) {
   const {data:values,error:valueError}=ids.length?await db.from('grouping_values').select('id,field_id,name,status').in('field_id',ids).eq('status','active').order('name').limit(1000):{data:[],error:null};
   return valueError?Response.json({error:'Query failed'},{status:503}):Response.json({fields:fields||[],values:values||[]},{headers:{'Cache-Control':'private, no-store'}});
  }
- let query=db.from(table).select('*').order('name').limit(500);
+ let query=db.from(table).select('*').order('name').order('id').limit(500);
  if(mapping[table]) {
   if(!z.uuid().safeParse(parent).success) return Response.json({rows:[]});
   if(table==='categories'||table==='grouping_fields') query=query.or(`mtaa_id.is.null,mtaa_id.eq.${parent}`);

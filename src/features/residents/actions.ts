@@ -41,3 +41,16 @@ export async function grantResidentAccess(_:ActionState,form:FormData):Promise<A
  revalidatePath('/admin');revalidatePath('/admin/residents');revalidatePath(`/admin/residents/${parsed.data.id}`);
  return {success:t.residentAccessGranted};
 }
+export async function deleteResidentPermanently(_:ActionState,form:FormData):Promise<ActionState> {
+ const {profile}=await requireAdmin(true);
+ const parsed=z.object({id:z.uuid(),confirmation:z.string().trim().min(2).max(120)}).safeParse(Object.fromEntries(form));
+ if(!parsed.success)return {error:t.invalid};
+ const db=createAdminClient();
+ const {data:resident,error:lookupError}=await db.from('residents').select('id,full_name').eq('id',parsed.data.id).maybeSingle();
+ if(lookupError||!resident)return {error:t.deleteResidentFailed};
+ if(parsed.data.confirmation!==resident.full_name)return {error:t.deleteResidentConfirmationMismatch};
+ const {error}=await db.rpc('delete_resident_permanently',{p_actor:profile.id,p_resident:resident.id});
+ if(error)return {error:t.deleteResidentFailed};
+ revalidatePath('/admin');revalidatePath('/admin/residents');revalidatePath('/admin/subscriptions');
+ redirect('/admin/residents');
+}

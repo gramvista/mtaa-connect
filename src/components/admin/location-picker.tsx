@@ -4,6 +4,7 @@ import { inputClass } from '@/components/ui/form';
 import { adminText as t } from '@/i18n/admin';
 import { InlineLocationCreate } from './inline-location-create';
 import type { Location } from '@/types/domain';
+import { baloziOptionLabel } from '@/features/locations/display';
 export type LocationPath={region:string;district:string;ward:string;mtaa:string;balozi:string};
 export const emptyPath:LocationPath={region:'',district:'',ward:'',mtaa:'',balozi:''};
 
@@ -22,7 +23,7 @@ export function LocationSelect({kind,parent,value,onChange,label,name,required=f
  },[kind,parent,endpoint]);
  const available=kind==='regions'||!!parent;
  return <label className="block text-sm">{label}<select className={inputClass} name={name} value={value} onChange={e=>onChange(e.target.value)} required={required} disabled={disabled||!available||loading}>
-  <option value="">{loading?'…':t.select}</option>{available&&rows.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
+  <option value="">{loading?'…':t.select}</option>{available&&rows.map(row=><option key={row.id} value={row.id}>{kind==='balozi_areas'?baloziOptionLabel(row):row.name}</option>)}
  </select>{error&&<span role="alert" className="text-destructive">{t.unavailable}</span>}</label>;
 }
 export function LocationPicker({value,onChange,level='balozi',required=false,baloziOptional=false,allowCreate=false,superAdmin=false,lockedMtaa=false,onBusy,endpoint='/api/locations',initialRegions=[]}:{value:LocationPath;onChange:(path:LocationPath)=>void;level?:keyof LocationPath;required?:boolean;baloziOptional?:boolean;allowCreate?:boolean;superAdmin?:boolean;lockedMtaa?:boolean;onBusy?:(busy:boolean)=>void;endpoint?:string;initialRegions?:Location[]}) {

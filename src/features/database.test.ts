@@ -198,6 +198,31 @@ describe('PostgreSQL migrations and security', () => {
       expect(await scalar('select balozi_area_id from public.residents where id=$1',[saved])).toBe(area);
     }finally{await db.exec('rollback');}
   });
+  it('shows the full location hierarchy and allows only Super Admin to permanently delete a resident',async()=>{
+    await db.exec('begin');
+    try{
+      await db.query("select public.save_location($1,'balozi_areas','Area A',$2,$3,'active','Balozi Asha')",[admin,mtaa,balozi]);
+      const location=await db.query<{region_name:string;district_name:string;ward_name:string;mtaa_name:string;balozi_area_name:string;balozi_leader_name:string}>('select region_name,district_name,ward_name,mtaa_name,balozi_area_name,balozi_leader_name from public.resident_directory where id=$1',[resident]);
+      expect(location.rows[0]).toEqual({region_name:'Test Region',district_name:'Test District',ward_name:'Test Ward',mtaa_name:'Test Mtaa A',balozi_area_name:'Area A',balozi_leader_name:'Balozi Asha'});
+
+      const token='9'.repeat(64),payment=await scalar("select public.register_public_resident($1,$2,$3,$4,$5,$6,$7,true,'mock')",[token,'8'.repeat(64),mtaa,balozi,'Delete Me','+255712345689',[categories[0]]]);
+      const rid=await scalar('select resident_id from public.payments where id=$1',[payment]);
+      await db.query("select public.settle_payment($1,'mock','delete-ref','delete-event',3000,'TZS')",[payment]);
+      await db.query('select public.save_resident($1,$2,$3,$4,$5,$6,true,true,$7)',[leader,mtaa,balozi,'Delete Me','+255712345689',[categories[0]],rid]);
+      await db.exec('savepoint forbidden_delete');
+      await expect(db.query('select public.delete_resident_permanently($1,$2)',[leader,rid])).rejects.toThrow('Forbidden');
+      await db.exec('rollback to savepoint forbidden_delete');
+      await db.query('select public.delete_resident_permanently($1,$2)',[admin,rid]);
+
+      expect(await scalar('select count(*)::text from public.residents where id=$1',[rid])).toBe('0');
+      expect(await scalar('select count(*)::text from public.payments where resident_id=$1',[rid])).toBe('0');
+      expect(await scalar('select count(*)::text from public.subscriptions where resident_id=$1',[rid])).toBe('0');
+      expect(await scalar('select count(*)::text from public.sms_recipients where resident_id=$1',[rid])).toBe('0');
+      expect(await scalar('select count(*)::text from private.registration_sessions where resident_id=$1',[rid])).toBe('0');
+      expect(await scalar("select count(*)::text from public.audit_logs where entity_id=$1 and action='resident.deleted_permanently'",[rid])).toBe('1');
+      expect(await scalar("select has_function_privilege('authenticated','public.delete_resident_permanently(uuid,uuid)','execute')::text")).toBe('false');
+    }finally{await db.exec('rollback');}
+  });
   it('allows registration without Balozi while preserving optional Balozi targeting',async()=>{
     await db.exec('begin');
     try{

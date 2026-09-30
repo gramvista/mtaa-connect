@@ -30,7 +30,7 @@ export async function GET(request:NextRequest){
    if(error)throw new Error('Lookup failed');
    if(!data)return Response.json({rows:[]});
   }
-  let query=db.from(kind).select('id,name').order('name').limit(kind==='grouping_fields'?100:500);
+  let query=db.from(kind).select(kind==='balozi_areas'?'id,name,balozi_name':'id,name').order('name').order('id').limit(kind==='grouping_fields'?100:500);
   if(kind==='districts')query=query.eq('region_id',parent!);
   if(kind==='wards')query=query.eq('district_id',parent!);
   if(kind==='mitaa')query=query.eq('ward_id',parent!).eq('status','active');

@@ -7,7 +7,7 @@ import type { GroupingField,GroupingValue,Location } from '@/types/domain';
 export default async function AgentRegister({searchParams}:{searchParams:Promise<{mtaa?:string}>}){
  const {profile,db,mtaa,assignments}=await requireAgent();const requested=(await searchParams).mtaa;const selected=assignments.find(a=>a.mtaa_id===requested)||assignments.find(a=>a.mtaa_id===profile.mtaa_id)||assignments[0];const mtaaId=selected?.mtaa_id||profile.mtaa_id!;const assignmentName=(value:unknown)=>Array.isArray(value)?(value[0] as {name?:string}|undefined)?.name:(value as {name?:string}|null)?.name;const mtaaName=assignmentName(selected?.mitaa)||mtaa.name;
  const [areasResult,categoriesResult,fieldsResult]=await Promise.all([
-  db.from('balozi_areas').select('id,name').eq('mtaa_id',mtaaId).eq('status','active').order('name').limit(500),
+  db.from('balozi_areas').select('id,name,balozi_name').eq('mtaa_id',mtaaId).eq('status','active').order('name').order('balozi_name').limit(500),
   db.from('categories').select('id,name,mtaa_id').or(`mtaa_id.is.null,mtaa_id.eq.${mtaaId}`).eq('status','active').order('name').limit(500),
   db.from('grouping_fields').select('id,mtaa_id,name,status').or(`mtaa_id.is.null,mtaa_id.eq.${mtaaId}`).eq('status','active').order('name').limit(100),
  ]);

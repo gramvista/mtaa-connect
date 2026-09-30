@@ -5,7 +5,9 @@ export type GroupingValue = { id: string; field_id: string; name: string; status
 export type Resident = {
  id: string; full_name: string; phone_number: string; mtaa_id: string; balozi_area_id: string | null;
  status: string; registration_status: string; category_ids: string[]; category_names: string;
- mtaa_name: string; balozi_name: string; subscription_status: string; expires_at: string | null;
+ region_name: string; district_name: string; ward_name: string; mtaa_name: string;
+ balozi_name: string; balozi_area_name: string; balozi_leader_name: string;
+ subscription_status: string; expires_at: string | null;
  group_value_ids: string[]; group_names: string;
 };
 export type Campaign = { id: string; mtaa_id: string; title: string; message: string; status: string; total_recipients: number; units_per_message: number; sent_count: number; delivered_count: number; failed_count: number; created_at: string };
